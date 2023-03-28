@@ -1,6 +1,7 @@
 package game.arenas;
 
 import game.racers.Racer;
+import utilities.Point;
 
 import java.util.ArrayList;
 
@@ -34,12 +35,16 @@ public class Arena {
     }
 
     public void initRace() {
-        double yStart = 0;
+        Point start = new Point(0, 0);
+        Point finish = new Point(length, 0);
+        int yStart = 0;
         for (int i = 0; i < activeRacers.size(); i++) {
-            activeRacers.get(i).initRace(0, yStart, length, FRICTION);
-            yStart += activeRacers.get(i).getHeight() + MIN_Y_GAP;
+            activeRacers.get(i).initRace(this, start, finish);
+            yStart += activeRacers.get(i).getCurrentLocation().getY() + MIN_Y_GAP;
+            start = new Point(0, yStart);
         }
     }
+
 
     public boolean hasActiveRacers() {
         return !activeRacers.isEmpty();
