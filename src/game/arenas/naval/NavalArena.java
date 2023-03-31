@@ -18,6 +18,8 @@ public class NavalArena extends Arena {
 
     public NavalArena(double length, int maxRacers){
         super(length, maxRacers, DEFAULT_FRICTION);
+        setArenaType(EnumContainer.ArenaType.NAVAL_ARENA);
+
         Body=EnumContainer.Body.LAKE;
         surface=EnumContainer.WaterSurface.FLAT;
         water=EnumContainer.Water.SWEET;

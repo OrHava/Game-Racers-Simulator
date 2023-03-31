@@ -44,4 +44,32 @@ public class EnumContainer {
 		RED,GREEN,BLUE,BLACK,YELLOW
 	}
 
+
+	public static enum Engine  {
+		FOURSTROKE, VTYPE, STRAIGHT, BOXER, ROTARY
+	}
+
+
+	public static enum BicycleType  {
+		MOUNTAIN,HYBRID,CRUISER,ROAD
+	}
+
+	public static enum Breed  {
+		THOROUGHBRED,STANDARDBRED,MORGAN,FRIESIAN
+	}
+
+	public static enum Team  {
+		SINGLE,DOUBLE,QUAD,EIGHT
+	}
+	public static enum BoatType  {
+		SKULLING,SWEEP
+	}
+
+	public static enum ArenaType {
+		BASE_ARENA,
+		AERIAL_ARENA,
+		LAND_ARENA,
+		NAVAL_ARENA
+	}
+
 }

@@ -5,7 +5,6 @@ package utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import utilities.Point;
 
 import factory.RaceBuilder;
 import game.arenas.Arena;
@@ -35,7 +34,9 @@ public class Program {
 	private static ArrayList<Racer> racers;
 
 	private static void addRacersToArena() {
+
 		for (Racer racer : racers) {
+
 			try {
 				arena.addRacer(racer);
 			} catch (RacerLimitException e) {
@@ -53,6 +54,8 @@ public class Program {
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			System.out.println("Unable to build arena!");
 			arena = new AerialArena();
+		} catch (Exception e) {
+			throw new RuntimeException(e); //need to remove
 		}
 		racers = new ArrayList<>();
 		try {
@@ -65,6 +68,8 @@ public class Program {
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			e1.printStackTrace();
+		} catch (Exception e) {
+			throw new RuntimeException(e); //need to remove
 		}
 
 		addRacersToArena();
@@ -77,6 +82,8 @@ public class Program {
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			System.out.println("Unable to build arena!");
 			arena = new LandArena();
+		} catch (Exception e) {
+			throw new RuntimeException(e); //need to remove
 		}
 		racers = new ArrayList<>();
 		try {
@@ -89,6 +96,8 @@ public class Program {
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			e1.printStackTrace();
+		} catch (Exception e) {
+			throw new RuntimeException(e); //need to remove
 		}
 
 		addRacersToArena();
@@ -101,6 +110,8 @@ public class Program {
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			System.out.println("Unable to build arena!");
 			arena = new NavalArena();
+		} catch (Exception e) {
+			throw new RuntimeException(e); //need to remove
 		}
 		racers = new ArrayList<>();
 		try {
@@ -112,6 +123,8 @@ public class Program {
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			e1.printStackTrace();
+		} catch (Exception e) {
+			throw new RuntimeException(e); //need to remove
 		}
 		addRacersToArena();
 	}
@@ -123,27 +136,31 @@ public class Program {
 		Fate.setSeed(477734503); // to get same "random" results every run;
 		////////////////////////////////////////////
 		testDefaults();
+
+
 		System.out.println("----------");
 		////////////////////////////////////////////
 		System.out.println("New Air Race");
 		initAirRace();
 		arena.initRace();
 		startRace();
-		arena.showResults();
+//		arena.showResults();
 		////////////////////////////////////////////
-		System.out.println("----------");
-		System.out.println("New Land Race");
-		initLandRace();
-		arena.initRace();
-		startRace();
-		arena.showResults();
-		////////////////////////////////////////////
-		System.out.println("----------");
-		System.out.println("New Naval Race");
-		initNavalRace();
-		arena.initRace();
-		startRace();
-		arena.showResults();
+
+
+//    	System.out.println("----------");
+//		System.out.println("New Land Race");
+//		initLandRace();
+//		arena.initRace();
+//		startRace();
+//		arena.showResults();
+//		////////////////////////////////////////////
+//		System.out.println("----------");
+//		System.out.println("New Naval Race");
+//		initNavalRace();
+//		arena.initRace();
+//		startRace();
+//		arena.showResults();
 
 	}
 

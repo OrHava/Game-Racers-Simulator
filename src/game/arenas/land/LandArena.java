@@ -18,6 +18,7 @@ public class LandArena extends Arena {
 
     public LandArena(double length, int maxRacers){
         super(length, maxRacers, DEFAULT_FRICTION);
+        setArenaType(EnumContainer.ArenaType.LAND_ARENA);
         coverage=EnumContainer.Coverage.GRASS;
         surface=EnumContainer.LandSurface.FLAT;
 

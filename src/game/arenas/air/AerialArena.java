@@ -17,6 +17,7 @@ public class AerialArena extends Arena  {
    }
    public AerialArena(double length, int maxRacers) {
       super(length, maxRacers, DEFAULT_FRICTION);
+      setArenaType(EnumContainer.ArenaType.AERIAL_ARENA);
       vision = EnumContainer.Vision.SUNNY;
       weather = EnumContainer.Weather.DRY;
       height = EnumContainer.Height.HIGH;
