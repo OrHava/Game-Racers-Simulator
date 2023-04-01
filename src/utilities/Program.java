@@ -144,23 +144,23 @@ public class Program {
 		initAirRace();
 		arena.initRace();
 		startRace();
-//		arena.showResults();
+		arena.showResults();
 		////////////////////////////////////////////
 
 
-//    	System.out.println("----------");
-//		System.out.println("New Land Race");
-//		initLandRace();
-//		arena.initRace();
-//		startRace();
-//		arena.showResults();
-//		////////////////////////////////////////////
-//		System.out.println("----------");
-//		System.out.println("New Naval Race");
-//		initNavalRace();
-//		arena.initRace();
-//		startRace();
-//		arena.showResults();
+    	System.out.println("----------");
+		System.out.println("New Land Race");
+		initLandRace();
+		arena.initRace();
+		startRace();
+		arena.showResults();
+		////////////////////////////////////////////
+		System.out.println("----------");
+		System.out.println("New Naval Race");
+		initNavalRace();
+		arena.initRace();
+		startRace();
+		arena.showResults();
 
 	}
 

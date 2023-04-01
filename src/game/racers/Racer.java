@@ -2,14 +2,15 @@ package game.racers;
 
 import game.arenas.Arena;
 import utilities.EnumContainer;
+import utilities.Fate;
 import utilities.Mishap;
 import utilities.Point;
 
 
 public abstract class Racer {
-    private static int serialNumber = 0;
+    private static int  count = 0;
+    private int serialNumber;
 
-    private int uniqueSerialNumber;
 
     private String name;
     private Point currentLocation;
@@ -25,9 +26,9 @@ public abstract class Racer {
 
 
     public Racer(String name,double maxSpeed,double acceleration,EnumContainer.Color color){
+        count++;
+        serialNumber = count;
 
-        this.uniqueSerialNumber = serialNumber;
-        serialNumber++;
         this.name = name;
         this.currentLocation = new Point(0, 0); // default value
         this.finish = new Point(0, 0); // default value
@@ -63,17 +64,54 @@ public abstract class Racer {
 
     }
     public Point Move(double friction){
+        mishap=Fate.generateMishap();
+
         if(currentSpeed!=maxSpeed){
-            currentSpeed+=acceleration*friction;
-            currentLocation.setX(currentLocation.getX()+currentSpeed);
+           if(mishap.getTurnsToFix()==0){
+               mishap=null;
+
+               if (Fate.breakDown()){
+
+                   mishap=Fate.generateMishap();
+                   if(mishap.isFixable()){
+                       acceleration=acceleration* mishap.getReductionFactor();
+                       mishap.nextTurn();;
+
+
+
+                   }
+
+               }
+
+
+
+
+           }
+
+
+
+
+
         }
+        currentSpeed+=acceleration*friction;
+        currentLocation.setX(currentLocation.getX()+currentSpeed);
+
+        System.out.println(this.name+" Has a new mishap! "+mishap.toString());
 
         return currentLocation;
+
     }
 
     public abstract String describeSpecific();
 
     public String describeRacer() {
+
+        if("Airplane Helicopter Bicycle Car Horse RowBoat SpeedBoat".contains(getName())){
+            return  "["+this.getClass().getSimpleName()+"]" +" name: "+getName()+" #"+serialNumber+", SerialNumber: "+getSerialNumber()+
+                    ", maxSpeed: "+getMaxSpeed()+", acceleration: "+
+                    getAcceleration()+", color: "+
+                    getColor().toString()+describeSpecific();
+        }
         return  "["+this.getClass().getSimpleName()+"]" +" name: "+getName()+", SerialNumber: "+getSerialNumber()+
                 ", maxSpeed: "+getMaxSpeed()+", acceleration: "+
                 getAcceleration()+", color: "+
@@ -96,7 +134,7 @@ public abstract class Racer {
     }
 
 
-    public static int getSerialNumber() {
+    public  int getSerialNumber() {
         return serialNumber;
     }
 

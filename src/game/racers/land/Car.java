@@ -21,11 +21,11 @@ public class Car extends Racer implements LandRacer{
 
     // Constructors
     public Car() {
-        this(CLASS_NAME + " #" + Racer.getSerialNumber(), DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR, DEFAULT_WHEELS);
+        this(CLASS_NAME  , DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR, DEFAULT_WHEELS);
     }
 
     public Car(String name, double maxSpeed, double acceleration,  EnumContainer.Color color, int numOfWheels) {
-        super(name == null ? CLASS_NAME + " #" + Racer.getSerialNumber() : name, maxSpeed, acceleration, color);
+        super(name, maxSpeed, acceleration, color);
         this.wheeled = new Wheeled(numOfWheels);
 
     }

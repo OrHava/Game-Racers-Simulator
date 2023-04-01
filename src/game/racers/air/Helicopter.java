@@ -12,12 +12,12 @@ public class Helicopter extends Racer implements  AerialRacer{
 
 
     public Helicopter() {
-        this(CLASS_NAME + " #" + Racer.getSerialNumber(), DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION,
+        this(CLASS_NAME , DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION,
                 DEFAULT_COLOR);
     }
 
     public Helicopter(String name, double maxSpeed, double acceleration, EnumContainer.Color color) {
-        super(name == null ? CLASS_NAME + " #" + Racer.getSerialNumber() : name, maxSpeed, acceleration, color);
+        super( name, maxSpeed, acceleration, color);
 
     }
     public String describeSpecific(){

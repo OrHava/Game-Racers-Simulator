@@ -10,8 +10,7 @@ import static java.lang.constant.ConstantDescs.DEFAULT_NAME;
 public class RowBoat extends  Racer implements NavalRacer {
 
     // Fields
-    public static final String CLASS_NAME = "RowBoat"
-            ;
+    public static final String CLASS_NAME = "RowBoat";
     public static final double DEFAULT_MAX_SPEED = 75;
     public static final double DEFAULT_ACCELERATION = 10;
     public static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.RED;
@@ -21,11 +20,11 @@ public class RowBoat extends  Racer implements NavalRacer {
 
     // Constructors
     public RowBoat() {
-        this(CLASS_NAME + " #" + Racer.getSerialNumber(), DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR);
+        this(CLASS_NAME , DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR);
     }
 
     public RowBoat(String name, double maxSpeed, double acceleration,  EnumContainer.Color color) {
-        super(name == null ? CLASS_NAME + " #" + Racer.getSerialNumber() : name, maxSpeed, acceleration, color);
+        super( name, maxSpeed, acceleration, color);
 
     }
 

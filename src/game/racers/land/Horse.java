@@ -18,11 +18,11 @@ public class Horse extends Racer implements LandRacer{
 
     // Constructors
     public Horse() {
-        this(CLASS_NAME + " #" + Racer.getSerialNumber(), DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR);
+        this(CLASS_NAME  , DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR);
     }
 
     public Horse(String name, double maxSpeed, double acceleration,  EnumContainer.Color color) {
-        super(name == null ? CLASS_NAME + " #" + Racer.getSerialNumber() : name, maxSpeed, acceleration, color);
+        super( name, maxSpeed, acceleration, color);
 
 
     }

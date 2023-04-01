@@ -20,11 +20,11 @@ public class Bicycle extends  Racer implements LandRacer {
 
     // Constructors
     public Bicycle() {
-        this(CLASS_NAME + " #" + Racer.getSerialNumber(), DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR, DEFAULT_WHEELS);
+        this(CLASS_NAME , DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR, DEFAULT_WHEELS);
     }
 
     public Bicycle(String name, double maxSpeed, double acceleration,  EnumContainer.Color color, int numOfWheels) {
-        super(name == null ? CLASS_NAME + " #" + Racer.getSerialNumber() : name, maxSpeed, acceleration, color);
+        super( name, maxSpeed, acceleration, color);
         this.wheeled = new Wheeled(numOfWheels);
 
     }

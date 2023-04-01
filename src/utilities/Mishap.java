@@ -13,7 +13,12 @@ public class Mishap {
         this.reductionFactor = reductionFactor;
     }
 
+
+    public Mishap() {
+
+    }
     public boolean isFixable() {
+
         return fixable;
     }
 
