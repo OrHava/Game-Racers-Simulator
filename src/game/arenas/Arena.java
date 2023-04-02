@@ -3,14 +3,11 @@ package game.arenas;
 import game.arenas.exceptions.RacerLimitException;
 import game.arenas.exceptions.RacerTypeException;
 import game.racers.Racer;
-import game.racers.air.AerialRacer;
 import game.racers.air.Airplane;
 import game.racers.air.Helicopter;
 import game.racers.land.Bicycle;
 import game.racers.land.Car;
 import game.racers.land.Horse;
-import game.racers.land.LandRacer;
-import game.racers.naval.NavalRacer;
 import game.racers.naval.RowBoat;
 import game.racers.naval.SpeedBoat;
 import utilities.EnumContainer;
@@ -18,7 +15,7 @@ import utilities.Point;
 
 import java.util.ArrayList;
 
-public class Arena {
+public  abstract class Arena {
 
 
     private ArrayList<Racer> activeRacers;
@@ -28,6 +25,12 @@ public class Arena {
     private final static int MIN_Y_GAP = 10;
     private double length;
     private EnumContainer.ArenaType arenaType;
+
+    /**
+     * @param length The Length of Race.
+     * @param maxRacers Amount of Max players who can race.
+     * @param friction of Arena.
+     */
     public Arena(double length, int maxRacers, double friction) {
         this.activeRacers = new ArrayList<Racer>();
         this.completedRacers = new ArrayList<Racer>();
@@ -38,7 +41,11 @@ public class Arena {
     }
 
 
-
+    /**
+     * @param racer object of type Racer.
+     * @throws RacerLimitException for Limit of size of arena.
+     * @throws RacerTypeException for wrong type in arena.
+     */
     public void addRacer(Racer racer) throws RacerLimitException, RacerTypeException {
 
 
@@ -60,17 +67,28 @@ public class Arena {
 
 
         if (activeRacers.size() >= MAX_RACERS) {
-            throw new RacerLimitException(MAX_RACERS, activeRacers.size());
+            throw new RacerLimitException(MAX_RACERS ,racer.getSerialNumber());
         }
         activeRacers.add(racer);
     }
+
+    /**
+     * @return arenaType
+     */
     public EnumContainer.ArenaType getArenaType() {
         return this.arenaType;
     }
 
+    /**
+     * @param arenaType SelfExplained.
+     */
     protected void setArenaType(EnumContainer.ArenaType arenaType) {
         this.arenaType = arenaType;
     }
+
+    /**
+     * Function to init Places of each Racer.
+     */
     public void initRace() {
         Point start = new Point(0, 0);
         Point finish = new Point(length, 0);
@@ -83,20 +101,29 @@ public class Arena {
     }
 
 
+    /**
+     * @return check if the Arena still have Active Racers.
+     */
     public boolean hasActiveRacers() {
         return !activeRacers.isEmpty();
     }
+
 
     public void playTurn() {
         for (int i = 0; i < activeRacers.size(); i++) {
             activeRacers.get(i).Move(FRICTION);
             if (activeRacers.get(i).getCurrentLocation().getX() >= length) {
                 crossFinishLine(activeRacers.get(i));
+
             }
         }
-        updateRacersStatus();
+
     }
 
+
+    /** Check if racer finished the race.
+     * @param racer object of type Racer.
+     */
     private void crossFinishLine(Racer racer) {
 
         if (!(racer.getCurrentLocation().getX()==racer.getFinish().getX())){
@@ -109,27 +136,29 @@ public class Arena {
     public void showResults() {
         System.out.println("Race Results:");
         for (int i = 0; i < completedRacers.size(); i++) {
-            System.out.println((i + 1) + ". " + completedRacers.get(i).describeRacer());
+            System.out.print("#"+i+"-> ");
+            completedRacers.get(i).introduceResults();
         }
     }
 
-    private void updateRacersStatus() {
-        for (int i = 0; i < activeRacers.size(); i++) {
-            if (!(activeRacers.get(i).getCurrentLocation().getX()==activeRacers.get(i).getFinish().getX())) {
-                completedRacers.add(activeRacers.get(i));
-                activeRacers.remove(i);
-            }
-        }
-    }
 
+    /**
+     * @return activeRacers
+     */
     public ArrayList<Racer> getActiveRacers() {
         return activeRacers;
     }
 
+    /**
+     * @param activeRacers Amount Of Active Players.
+     */
     public void setActiveRacers(ArrayList<Racer> activeRacers) {
         this.activeRacers = activeRacers;
     }
 
+    /**
+     * @return completedRacers Racers who completed the race.
+     */
     public ArrayList<Racer> getCompletedRacers() {
         return completedRacers;
     }
@@ -138,18 +167,30 @@ public class Arena {
         this.completedRacers = completedRacers;
     }
 
+    /**
+     * @return FRICTION of Arena.
+     */
     public double getFRICTION() {
         return FRICTION;
     }
 
+    /**
+     * @return MAX_RACERS Possible AMount Racers in the Arena.
+     */
     public int getMAX_RACERS() {
         return MAX_RACERS;
     }
 
+    /**
+     * @return length of Arena.
+     */
     public double getLength() {
         return length;
     }
 
+    /**
+     * @param length of Arena.
+     */
     public void setLength(double length) {
         this.length = length;
     }

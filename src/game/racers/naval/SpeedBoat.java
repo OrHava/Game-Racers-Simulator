@@ -22,6 +22,12 @@ public class SpeedBoat extends Racer implements NavalRacer{
         this(CLASS_NAME  , DEFAULT_MAX_SPEED, DEFAULT_ACCELERATION, DEFAULT_COLOR);
     }
 
+    /**
+     * @param name
+     * @param maxSpeed
+     * @param acceleration
+     * @param color
+     */
     public SpeedBoat(String name, double maxSpeed, double acceleration,  EnumContainer.Color color) {
         super( name, maxSpeed, acceleration, color);
         //+ Racer.getSerialNumber()
@@ -44,6 +50,10 @@ public class SpeedBoat extends Racer implements NavalRacer{
     public void setTeam(EnumContainer.Team team) {
         this.team = team;
     }
+
+    /**
+     * @return
+     */
     public String describeSpecific(){
         return ", Type: "+type.toString() +", Team: "+team.toString() ;
 

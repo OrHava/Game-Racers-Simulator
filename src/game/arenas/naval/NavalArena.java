@@ -16,6 +16,10 @@ public class NavalArena extends Arena {
         this(DEFAULT_LENGTH,DEFAULT_MAX_RACER);
     }
 
+    /**
+     * @param length The Length of Race.
+     * @param maxRacers Amount of Max players who can race.
+     */
     public NavalArena(double length, int maxRacers){
         super(length, maxRacers, DEFAULT_FRICTION);
         setArenaType(EnumContainer.ArenaType.NAVAL_ARENA);
@@ -26,14 +30,23 @@ public class NavalArena extends Arena {
     }
 
 
+    /**
+     * @param water Characteristic of the Arena.
+     */
     public void setWater(EnumContainer.Water water) {
         this.water = water;
     }
 
+    /**
+     * @param surface Characteristic of the Arena.
+     */
     public void setSurface(EnumContainer.WaterSurface surface) {
         this.surface = surface;
     }
 
+    /**
+     * @param body Characteristic of the Arena.
+     */
     public void setBody(EnumContainer.Body body) {
         Body = body;
     }

@@ -16,6 +16,10 @@ public class LandArena extends Arena {
         this(DEFAULT_LENGTH,DEFAULT_MAX_RACER);
     }
 
+    /**
+     * @param length The Length of Race.
+     * @param maxRacers Amount of Max players who can race.
+     */
     public LandArena(double length, int maxRacers){
         super(length, maxRacers, DEFAULT_FRICTION);
         setArenaType(EnumContainer.ArenaType.LAND_ARENA);
@@ -25,10 +29,16 @@ public class LandArena extends Arena {
     }
 
 
+    /**
+     * @param coverage Characteristic of the Arena.
+     */
     public void setCoverage(EnumContainer.Coverage coverage) {
         this.coverage = coverage;
     }
 
+    /**
+     * @param surface Characteristic of the Arena.
+     */
     public void setSurface(EnumContainer.LandSurface surface) {
         this.surface = surface;
     }

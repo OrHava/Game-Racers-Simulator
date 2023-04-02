@@ -16,10 +16,20 @@ public class Helicopter extends Racer implements  AerialRacer{
                 DEFAULT_COLOR);
     }
 
+    /**
+     * @param name
+     * @param maxSpeed
+     * @param acceleration
+     * @param color
+     */
     public Helicopter(String name, double maxSpeed, double acceleration, EnumContainer.Color color) {
         super( name, maxSpeed, acceleration, color);
 
     }
+
+    /**
+     * @return
+     */
     public String describeSpecific(){
         return "";
 

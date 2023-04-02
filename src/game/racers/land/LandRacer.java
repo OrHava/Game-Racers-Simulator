@@ -1,6 +1,7 @@
 package game.racers.land;
 
-import game.racers.Racer;
-
+/**
+ * InterFace to later check each racer of which he is.
+ */
 public interface LandRacer {
 }

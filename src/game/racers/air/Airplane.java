@@ -11,6 +11,14 @@ public class Airplane extends Racer implements AerialRacer  {
     static final double DEFAULT_ACCELERATION=100;
     static final EnumContainer.Color DEFAULT_color= EnumContainer.Color.BLACK;
     private Wheeled wheeled;
+
+    /**
+     * @param name
+     * @param maxSpeed
+     * @param acceleration
+     * @param color
+     * @param numOfWheels
+     */
     public Airplane(String name, double maxSpeed, double acceleration, EnumContainer.Color color, int numOfWheels) {
         super( name, maxSpeed, acceleration, color);
         this.wheeled = new Wheeled(numOfWheels);
@@ -21,14 +29,24 @@ public class Airplane extends Racer implements AerialRacer  {
                 DEFAULT_color, DEFAULT_WHEELS);
     }
 
+    /**
+     * @return
+     */
     public EnumContainer.Color getDefaultColor() {
         return DEFAULT_color;
     }
 
 
+    /**
+     * @return
+     */
     public Wheeled getWheeled() {
         return wheeled;
     }
+
+    /**
+     * @return
+     */
     public String describeSpecific(){
         return wheeled.describeSpecific();
 

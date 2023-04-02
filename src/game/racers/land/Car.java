@@ -4,9 +4,6 @@ import game.racers.Racer;
 import game.racers.Wheeled;
 import utilities.EnumContainer;
 
-import java.awt.Color;
-
-import static java.lang.constant.ConstantDescs.DEFAULT_NAME;
 
 public class Car extends Racer implements LandRacer{
     // Fields

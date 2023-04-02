@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package utilities;
 
@@ -34,9 +34,7 @@ public class Program {
 	private static ArrayList<Racer> racers;
 
 	private static void addRacersToArena() {
-
 		for (Racer racer : racers) {
-
 			try {
 				arena.addRacer(racer);
 			} catch (RacerLimitException e) {
@@ -51,11 +49,9 @@ public class Program {
 		try {
 			arena = builder.buildArena("game.arenas.air.AerialArena", 1450, 4);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				 | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			System.out.println("Unable to build arena!");
 			arena = new AerialArena();
-		} catch (Exception e) {
-			throw new RuntimeException(e); //need to remove
 		}
 		racers = new ArrayList<>();
 		try {
@@ -66,10 +62,8 @@ public class Program {
 			racers.add(builder.buildWheeledRacer("game.racers.land.Car", "car", 15, 1, Color.GREEN, 3));
 			racers.add(builder.buildRacer("game.racers.air.Helicopter", "Alby", 200, 8, Color.BLUE));
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				 | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			e1.printStackTrace();
-		} catch (Exception e) {
-			throw new RuntimeException(e); //need to remove
 		}
 
 		addRacersToArena();
@@ -79,11 +73,9 @@ public class Program {
 		try {
 			arena = builder.buildArena("game.arenas.land.LandArena", 1450, 8);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				 | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			System.out.println("Unable to build arena!");
 			arena = new LandArena();
-		} catch (Exception e) {
-			throw new RuntimeException(e); //need to remove
 		}
 		racers = new ArrayList<>();
 		try {
@@ -94,10 +86,8 @@ public class Program {
 			racers.add(builder.buildWheeledRacer("game.racers.land.Bicycle", "Timmy", 15, 1, Color.GREEN, 3));
 			racers.add(builder.buildRacer("game.racers.air.Helicopter", "Alby", 200, 8, Color.BLUE));
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				 | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			e1.printStackTrace();
-		} catch (Exception e) {
-			throw new RuntimeException(e); //need to remove
 		}
 
 		addRacersToArena();
@@ -107,11 +97,9 @@ public class Program {
 		try {
 			arena = builder.buildArena("game.arenas.naval.NavalArena", 1225, 2);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				 | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			System.out.println("Unable to build arena!");
 			arena = new NavalArena();
-		} catch (Exception e) {
-			throw new RuntimeException(e); //need to remove
 		}
 		racers = new ArrayList<>();
 		try {
@@ -121,10 +109,8 @@ public class Program {
 			racers.add(builder.buildWheeledRacer("game.racers.land.Car", "car", 15, 1, Color.GREEN, 3));
 			racers.add(builder.buildRacer("game.racers.land.Car", "car", 15, 1, Color.GREEN)); // intentional exception!
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				 | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 			e1.printStackTrace();
-		} catch (Exception e) {
-			throw new RuntimeException(e); //need to remove
 		}
 		addRacersToArena();
 	}
@@ -136,8 +122,6 @@ public class Program {
 		Fate.setSeed(477734503); // to get same "random" results every run;
 		////////////////////////////////////////////
 		testDefaults();
-
-
 		System.out.println("----------");
 		////////////////////////////////////////////
 		System.out.println("New Air Race");
@@ -146,9 +130,7 @@ public class Program {
 		startRace();
 		arena.showResults();
 		////////////////////////////////////////////
-
-
-    	System.out.println("----------");
+		System.out.println("----------");
 		System.out.println("New Land Race");
 		initLandRace();
 		arena.initRace();

@@ -12,9 +12,15 @@ public class AerialArena extends Arena  {
    private EnumContainer.Height height = EnumContainer.Height.HIGH;
    private EnumContainer.Wind wind = EnumContainer.Wind.HIGH;
 
+
    public AerialArena() {
       this(DEFAULT_LENGTH, DEFAULT_MAX_RACERS);
    }
+
+   /**
+    * @param length The Length of Race.
+    * @param maxRacers Amount of Max players who can race.
+    */
    public AerialArena(double length, int maxRacers) {
       super(length, maxRacers, DEFAULT_FRICTION);
       setArenaType(EnumContainer.ArenaType.AERIAL_ARENA);
@@ -24,18 +30,30 @@ public class AerialArena extends Arena  {
       wind = EnumContainer.Wind.HIGH;
    }
 
+   /**
+    * @param vision Characteristic of the Arena.
+    */
    public void setVision(EnumContainer.Vision vision) {
       this.vision = vision;
    }
 
+   /**
+    * @param weather Characteristic of the Arena.
+    */
    public void setWeather(EnumContainer.Weather weather) {
       this.weather = weather;
    }
 
+   /**
+    * @param height Characteristic of the Arena.
+    */
    public void setHeight(EnumContainer.Height height) {
       this.height = height;
    }
 
+   /**
+    * @param wind Characteristic of the Arena.
+    */
    public void setWind(EnumContainer.Wind wind) {
       this.wind = wind;
    }
