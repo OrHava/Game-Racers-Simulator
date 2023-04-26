@@ -9,7 +9,7 @@ public class Fate {
 	/**
 	 * @return
 	 */
-	public static boolean breakDown() {
+	public static boolean breakDown(double failureProbability) {
 		return rand.nextBoolean();
 	}
 

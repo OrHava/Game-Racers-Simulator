@@ -6,8 +6,10 @@ import utilities.Fate;
 import utilities.Mishap;
 import utilities.Point;
 
+import java.util.Observable;
 
-public abstract class Racer {
+
+public abstract class Racer extends Observable implements Runnable {
     private static int  count = 0;
     private int serialNumber;
 
@@ -22,7 +24,7 @@ public abstract class Racer {
     private double failureProbability;
     private EnumContainer.Color color;
     private Mishap mishap;
-
+    private double arenaFriction;
 
     /**
      @param name The name of the Racer.
@@ -41,9 +43,10 @@ public abstract class Racer {
         this.maxSpeed = maxSpeed;
         this.acceleration = acceleration;
         this.currentSpeed = 0; // default value
-        this.failureProbability = 0; // default value
+        this.failureProbability = 0.1; // default value
         this.color = color;
         this.mishap = null; // default value
+
     }
 
     public Racer(){
@@ -62,11 +65,12 @@ public abstract class Racer {
     }
 
     /**
-     @param arena The arena the Racer is racing in.
-     @param start The starting point of the Racer.
-     @param finish The finish point of the Racer.
+     * @param arena    The arena the Racer is racing in.
+     * @param start    The starting point of the Racer.
+     * @param finish   The finish point of the Racer.
+     * @param FRICTION
      */
-    public void initRace(Arena arena, Point start,Point finish){
+    public void initRace(Arena arena, Point start, Point finish, double FRICTION){
         this.arena=arena;
         this.currentLocation=start;
         this.finish=finish;
@@ -85,7 +89,7 @@ public abstract class Racer {
         double reductionFactor = 1;
         if (this.mishap == null || (mishap.isFixable() && mishap.getTurnsToFix() == 0)) {
             mishap = null;
-            if (Fate.breakDown()) {
+            if (Fate.breakDown(this.failureProbability)) {
                 this.mishap = Fate.generateMishap();
                 System.out.println(this.getName() + " Has a new mishap!: " + mishap);
                 mishap.nextTurn();
@@ -111,6 +115,69 @@ public abstract class Racer {
         return newPoint;
     }
 
+    public void move() {
+        double reductionFactor = 1;
+        if (!(this.hasMishap()) && Fate.breakDown(this.failureProbability)) {
+            this.mishap = Fate.generateMishap();
+            this.setChanged();
+            System.out.println(this.name + " Has a new mishap! (" + this.mishap + ")");
+            if (this.isDisabled()) {
+                notifyObservers(EnumContainer.RacerEvent.DISABLED);
+                return;
+            } else {
+                this.notifyObservers(EnumContainer.RacerEvent.BROKENDOWN);
+            }
+        }
+
+        if (this.hasMishap()) {
+            reductionFactor = mishap.getReductionFactor();
+            this.mishap.nextTurn();
+        }
+
+        if (this.currentSpeed < this.maxSpeed) {
+            this.setCurrentSpeed(this.currentSpeed + this.acceleration * this.arenaFriction);
+        }
+
+        double newX = (this.currentLocation.getX() + this.currentSpeed) * reductionFactor;
+        Point newLocation = new Point(newX, this.currentLocation.getY());
+        this.setCurrentLocation(newLocation);
+    }
+
+    private boolean isDisabled() {
+        if (this.mishap != null) {
+            return this.mishap.isFixable() == false;
+        }
+        return false;
+    }
+
+    private boolean hasMishap() {
+        if (this.mishap != null && this.mishap.getTurnsToFix() == 0) {
+            this.setMishap(null);
+            this.setChanged();
+            this.notifyObservers(EnumContainer.RacerEvent.REPAIRED);
+        }
+        return this.mishap != null;
+    }
+    private boolean raceInPrograss() {
+        return this.currentLocation.getX() < this.finish.getX();
+    }
+    @Override
+    public void run() {
+        while (this.raceInPrograss() && !this.isDisabled()) {
+            System.out.println("*************************************run of racer work: ****************************************************" );
+            this.move();
+            // DEV disable sleep
+            // try {
+            // Thread.sleep(100);
+            // } catch (InterruptedException e) {
+            // e.printStackTrace();
+            // }
+        }
+        if (this.isDisabled())
+            return;
+        setChanged();
+        this.notifyObservers(EnumContainer.RacerEvent.FINISHED);
+    }
 
     /**
      * @return describe of Specific Racer
@@ -165,9 +232,9 @@ public abstract class Racer {
     /**
      * @return
      */
-    public boolean hasMishap() {
-        return mishap != null;
-    }
+//    public boolean hasMishap() {
+//        return mishap != null;
+//    }
 
 
     /**

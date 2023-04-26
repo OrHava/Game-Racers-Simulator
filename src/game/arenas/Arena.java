@@ -14,8 +14,13 @@ import utilities.EnumContainer;
 import utilities.Point;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public  abstract class Arena {
+public  abstract class Arena implements Observer {
 
 
     private ArrayList<Racer> activeRacers;
@@ -25,6 +30,8 @@ public  abstract class Arena {
     private final static int MIN_Y_GAP = 10;
     private double length;
     private EnumContainer.ArenaType arenaType;
+    private ArrayList<Racer> brokenRacers;
+    private ArrayList<Racer> disabledRacers;
 
     /**
      * @param length The Length of Race.
@@ -32,8 +39,11 @@ public  abstract class Arena {
      * @param friction of Arena.
      */
     public Arena(double length, int maxRacers, double friction) {
-        this.activeRacers = new ArrayList<Racer>();
-        this.completedRacers = new ArrayList<Racer>();
+        this.setActiveRacers(new ArrayList<Racer>());
+        this.setCompleatedRacers(new ArrayList<Racer>());
+        this.setBrokenRacers(new ArrayList<Racer>());
+        this.setDisabledRacers(new ArrayList<Racer>());
+
         this.length = length;
         this.MAX_RACERS = maxRacers;
         this.FRICTION = friction;
@@ -89,37 +99,156 @@ public  abstract class Arena {
     /**
      * Function to init Places of each Racer.
      */
-    public void initRace() {
-        Point start = new Point(0, 0);
-        Point finish = new Point(length, 0);
-        int yStart = 0;
-        for (int i = 0; i < activeRacers.size(); i++) {
-            activeRacers.get(i).initRace(this, start, finish);
-            yStart += activeRacers.get(i).getCurrentLocation().getY() + MIN_Y_GAP;
-            start = new Point(0, yStart);
-        }
-    }
+//    public void initRace() {
+//        Point start = new Point(0, 0);
+//        Point finish = new Point(length, 0);
+//        int yStart = 0;
+//        for (int i = 0; i < activeRacers.size(); i++) {
+//            activeRacers.get(i).initRace(this, start, finish, this.FRICTION);
+//            yStart += activeRacers.get(i).getCurrentLocation().getY() + MIN_Y_GAP;
+//            start = new Point(0, yStart);
+//        }
+//    }
 
 
     /**
      * @return check if the Arena still have Active Racers.
      */
-    public boolean hasActiveRacers() {
-        return !activeRacers.isEmpty();
-    }
+//    public boolean hasActiveRacers() {
+//        return !activeRacers.isEmpty();
+//    }
 
 
-    public void playTurn() {
-        for (int i = 0; i < activeRacers.size(); i++) {
-            activeRacers.get(i).Move(FRICTION);
-            if (activeRacers.get(i).getCurrentLocation().getX() >= length) {
-                crossFinishLine(activeRacers.get(i));
+//    public void playTurn() {
+//        for (int i = 0; i < activeRacers.size(); i++) {
+//            activeRacers.get(i).Move(FRICTION);
+//            if (activeRacers.get(i).getCurrentLocation().getX() >= length) {
+//                crossFinishLine(activeRacers.get(i));
+//
+//            }
+//        }
+//
+//    }
+    public void startRace() throws InterruptedException {
+        initRace();
+        ExecutorService e;
+        synchronized (activeRacers) {
+            e = Executors.newFixedThreadPool(this.activeRacers.size());
+            synchronized (this) {
+                for (Racer racer : activeRacers) {
+                    e.execute(racer);
+                    System.out.println("*************************************execute of racer work: ****************************************************" );
 
+                }
             }
         }
-
+        e.shutdown();
+        e.awaitTermination(10, TimeUnit.MINUTES);
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+
+        Racer racer = (Racer) o;
+
+        switch ((EnumContainer.RacerEvent) arg) {
+            case BROKENDOWN:
+                synchronized (this.activeRacers) {
+                    this.activeRacers.remove(racer);
+                    this.brokenRacers.add(racer);
+                }
+                break;
+            case FINISHED:
+                synchronized (this.activeRacers) {
+                    this.activeRacers.remove(racer);
+                    this.brokenRacers.remove(racer);
+                    this.completedRacers.add(racer);
+                }
+                break;
+            case REPAIRED:
+                synchronized (this.activeRacers) {
+                    this.brokenRacers.remove(racer);
+                    this.activeRacers.add(racer);
+                }
+                break;
+            case DISABLED:
+                synchronized (this.activeRacers) {
+                    this.activeRacers.remove(racer);
+                    this.disabledRacers.add(racer);
+                }
+                break;
+        }
+    }
+
+
+
+    public ArrayList<Racer> getActiveRacers() {
+        synchronized (activeRacers) {
+            return activeRacers;
+        }
+    }
+
+    public ArrayList<Racer> getBrokenRacers() {
+        synchronized (activeRacers) {
+            return brokenRacers;
+        }
+    }
+
+    public ArrayList<Racer> getCompleatedRacers() {
+        synchronized (activeRacers) {
+            return completedRacers;
+        }
+    }
+
+    public ArrayList<Racer> getDisabledRacers() {
+        synchronized (activeRacers) {
+            return disabledRacers;
+        }
+    }
+
+    public boolean hasActiveRacers() {
+        synchronized (activeRacers) {
+            return this.activeRacers.size() > 0;
+        }
+    }
+
+    public void initRace() {
+        int y = 0;
+        System.out.println("activeRacers: " + activeRacers.toString());
+        synchronized (activeRacers) {
+            for (Racer racer : this.activeRacers) {
+                Point s = new Point(0, y);
+                Point f = new Point(this.length, y);
+                racer.initRace(this, s, f, this.FRICTION);
+                y += Arena.MIN_Y_GAP;
+            }
+        }
+    }
+
+    @Deprecated
+    public void playTurn() {
+        for (Racer racer : this.activeRacers) {
+            racer.move();
+        }
+        for (Racer r : this.completedRacers)
+            this.activeRacers.remove(r);
+    }
+
+    public void setActiveRacers(ArrayList<Racer> activeRacers) {
+        this.activeRacers = activeRacers;
+    }
+
+    public void setBrokenRacers(ArrayList<Racer> brokenRacers) {
+        this.brokenRacers = brokenRacers;
+    }
+
+    public void setCompleatedRacers(ArrayList<Racer> compleatedRacers) {
+        this.completedRacers = compleatedRacers;
+    }
+
+    public void setDisabledRacers(ArrayList<Racer> disabledRacers) {
+        this.disabledRacers = disabledRacers;
+    }
 
     /** Check if racer finished the race.
      * @param racer object of type Racer.
@@ -145,16 +274,14 @@ public  abstract class Arena {
     /**
      * @return activeRacers
      */
-    public ArrayList<Racer> getActiveRacers() {
-        return activeRacers;
-    }
+//    public ArrayList<Racer> getActiveRacers() {
+//        return activeRacers;
+//    }
 
     /**
      * @param activeRacers Amount Of Active Players.
      */
-    public void setActiveRacers(ArrayList<Racer> activeRacers) {
-        this.activeRacers = activeRacers;
-    }
+
 
     /**
      * @return completedRacers Racers who completed the race.

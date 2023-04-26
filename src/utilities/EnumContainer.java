@@ -44,7 +44,9 @@ public class EnumContainer {
 		RED,GREEN,BLUE,BLACK,YELLOW
 	}
 
-
+	public static enum RacerEvent {
+		FINISHED, BROKENDOWN, REPAIRED, DISABLED
+	}
 	public static enum Engine  {
 		FOURSTROKE, VTYPE, STRAIGHT, BOXER, ROTARY
 	}
