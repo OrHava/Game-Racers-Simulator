@@ -66,13 +66,13 @@ public class Race extends JFrame {
     private static RaceBuilder builder = RaceBuilder.getInstance();
     private static ArrayList<Racer> racers;
     private int arenaLength = 1000;
-    private int xPosition;
+
     ArrayList<String> racersImages = new ArrayList<String>();
     private int arenaHeight = 700;
     private int maxRacers = 8;
     private int racersNumber = 0;
     private Arena arena = null;
-    private Timer timer;
+
     private boolean raceStarted = false;
     private JFrame infoTable = null;
     private boolean raceFinished = false;
@@ -250,40 +250,61 @@ public class Race extends JFrame {
 
 
 
+//
+//                    SwingUtilities.invokeLater(new Runnable() {
+//                        public void run() {
+//                            try {
+//                                arena.startRace();
+//                            } catch (InterruptedException ex) {
+//                                throw new RuntimeException(ex);
+//                            }
+//                            // Set the initial panel position and show the frame
+//
+//                            setLocationRelativeTo(null);
+//                            setVisible(true);
+//
+//                            raceStarted = true;
+//                            // Update the panel position in a loop with Thread.sleep()
+//                            new Thread(new Runnable() {
+//                                public void run() {
+//                                    try {
+//                                        while ((int) racers.get(0).getCurrentLocation().getX() <= getWidth()) {
+//
+//                                            PanelRacer1.setLocation((int) racers.get(0).getCurrentLocation().getX() + 5, 0);
+//                                            PanelRacer1.repaint();
+//                                            System.out.println("Position: " + (int) racers.get(0).getCurrentLocation().getX());
+//                                            Thread.sleep(30);
+//                                        }
+//                                        raceFinished = true;
+//                                    } catch (InterruptedException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }).start();
+//
+//                        }
+//                    });
 
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            try {
-                                arena.startRace();
-                            } catch (InterruptedException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            // Set the initial panel position and show the frame
-
-                            setLocationRelativeTo(null);
-                            setVisible(true);
-
-                            raceStarted = true;
-                            // Update the panel position in a loop with Thread.sleep()
-                            new Thread(new Runnable() {
-                                public void run() {
+                    try {
+                        raceStarted = true;
+                        (new Thread() {
+                            public void run() {
+                                while (arena.hasActiveRacers()) {
                                     try {
-                                        while ((int) racers.get(0).getCurrentLocation().getX() <= getWidth()) {
-
-                                            PanelRacer1.setLocation((int) racers.get(0).getCurrentLocation().getX() + 5, 0);
-                                            PanelRacer1.repaint();
-                                            System.out.println("Position: " + (int) racers.get(0).getCurrentLocation().getX());
-                                            Thread.sleep(30);
-                                        }
-                                        raceFinished = true;
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                                        Thread.sleep(30);
+                                    } catch (InterruptedException ex) {
+                                        ex.printStackTrace();
                                     }
+                                    System.out.println("Position: " + (int) racers.get(0).getCurrentLocation().getX());
                                 }
-                            }).start();
 
-                        }
-                    });
+                                raceFinished = true;
+                            }
+                        }).start();
+                        arena.startRace();
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
 
 //                    for (int i = 0; i < racersNumber; i++) {
 //                        JLabel picLabel2 = new JLabel(racersImages[i]);
@@ -324,7 +345,7 @@ public class Race extends JFrame {
                     data[i][1] = "" + r.getCurrentSpeed();
                     data[i][2] = "" + r.getMaxSpeed();
                     data[i][3] = "" + r.getCurrentLocation().getX();
-                    data[i][4] = "ACT";
+                    data[i][4] = "Active";
                     i++;
                 }
                 for (Racer r : arena.getBrokenRacers()) {

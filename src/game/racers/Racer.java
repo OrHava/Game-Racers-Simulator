@@ -72,8 +72,9 @@ public abstract class Racer extends Observable implements Runnable {
      */
     public void initRace(Arena arena, Point start, Point finish, double FRICTION){
         this.arena=arena;
-        this.currentLocation=start;
-        this.finish=finish;
+        this.setCurrentLocation (new Point(start));
+        this.setFinish(new Point(finish));
+        this.arenaFriction=FRICTION;
 
 
     }
