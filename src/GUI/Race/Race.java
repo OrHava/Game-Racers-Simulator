@@ -325,44 +325,44 @@ public class Race extends JFrame {
                     JOptionPane.showMessageDialog(race, "Please build arena first and add racers!");
                     return;
                 }
-                String[] columnNames = { "Racer name", "Current speed", "Max speed", "Current X location", "Finished" };
-                String[][] data = new String[racersNumber][5];
+                String[] DataNames = { "Racer name", "Current speed", "Max speed", "Current X location", "Finished" };
+                String[][] Data = new String[racersNumber][5];
                 int i = 0;
                 for (Racer racer : arena.getCompleatedRacers()) {
-                    data[i][0] = racer.getName();
-                    data[i][1] = "" + racer.getCurrentSpeed();
-                    data[i][2] = "" + racer.getMaxSpeed();
-                    data[i][3] = "" + racer.getCurrentLocation().getX();
-                    data[i][4] = "Yes";
+                    Data[i][0] = racer.getName();
+                    Data[i][1] = "" + racer.getCurrentSpeed();
+                    Data[i][2] = "" + racer.getMaxSpeed();
+                    Data[i][3] = "" + racer.getCurrentLocation().getX();
+                    Data[i][4] = "Yes";
                     i++;
                 }
 
                 for (Racer racer : arena.getActiveRacers()) {
-                    data[i][0] = racer.getName();
-                    data[i][1] = "" + racer.getCurrentSpeed();
-                    data[i][2] = "" + racer.getMaxSpeed();
-                    data[i][3] = "" + racer.getCurrentLocation().getX();
-                    data[i][4] = "No, Its Still In the race.";
+                    Data[i][0] = racer.getName();
+                    Data[i][1] = "" + racer.getCurrentSpeed();
+                    Data[i][2] = "" + racer.getMaxSpeed();
+                    Data[i][3] = "" + racer.getCurrentLocation().getX();
+                    Data[i][4] = "No";
                     i++;
                 }
                 for (Racer racer : arena.getBrokenRacers()) {
-                    data[i][0] = racer.getName();
-                    data[i][1] = "" + racer.getCurrentSpeed();
-                    data[i][2] = "" + racer.getMaxSpeed();
-                    data[i][3] = "" + racer.getCurrentLocation().getX();
-                    data[i][4] = "No, its Broken.";
+                    Data[i][0] = racer.getName();
+                    Data[i][1] = "" + racer.getCurrentSpeed();
+                    Data[i][2] = "" + racer.getMaxSpeed();
+                    Data[i][3] = "" + racer.getCurrentLocation().getX();
+                    Data[i][4] = "No";
                     i++;
                 }
                 for (Racer racer : arena.getDisabledRacers()) {
-                    data[i][0] = racer.getName();
-                    data[i][1] = "" + racer.getCurrentSpeed();
-                    data[i][2] = "" + racer.getMaxSpeed();
-                    data[i][3] = "" + racer.getCurrentLocation().getX();
-                    data[i][4] = "No, its Disabled.";
+                    Data[i][0] = racer.getName();
+                    Data[i][1] = "" + racer.getCurrentSpeed();
+                    Data[i][2] = "" + racer.getMaxSpeed();
+                    Data[i][3] = "" + racer.getCurrentLocation().getX();
+                    Data[i][4] = "No";
                     i++;
                 }
 
-                JTable table = new JTable(data, columnNames);
+                JTable table = new JTable(Data, DataNames);
                 table.setPreferredScrollableViewportSize(table.getPreferredSize());
                 JScrollPane scrollPane = new JScrollPane(table);
 

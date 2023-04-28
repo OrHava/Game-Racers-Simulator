@@ -11,7 +11,7 @@ public class Fate {
 	 * @return
 	 */
 	public static boolean breakDown(double failureProbability) {
-		return rand.nextFloat() > failureProbability;
+		return rand.nextFloat() < failureProbability;
 	}
 
 	/**
@@ -19,7 +19,7 @@ public class Fate {
 	 */
 	public static boolean generateFixable() {
 
-		return rand.nextFloat() < 0.95;
+		return true;
 	}
 
 
