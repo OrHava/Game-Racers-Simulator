@@ -1,10 +1,11 @@
 package utilities;
-
+/** @author Or Hava 208418483
+ */
 public class Point {
-    public static final int MAX_X = 1000000;
-    public static final int MIN_X = 0;
-    public static final int MAX_Y = 800;
-    public static final int MIN_Y = 0;
+    private static final int MAX_X = 1000000;
+    private static final int MIN_X = 0;
+    private static final int MAX_Y = 800;
+    private static final int MIN_Y = 0;
 
     private double x;
     private double y;

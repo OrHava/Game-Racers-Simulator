@@ -1,7 +1,8 @@
 package utilities;
 
 import java.util.Random;
-
+/** @author Or Hava 208418483
+ */
 public class Fate {
 
 	private static Random rand = new Random();
@@ -10,15 +11,17 @@ public class Fate {
 	 * @return
 	 */
 	public static boolean breakDown(double failureProbability) {
-		return rand.nextBoolean();
+		return rand.nextFloat() > failureProbability;
 	}
 
 	/**
 	 * @return
 	 */
 	public static boolean generateFixable() {
-		return rand.nextInt(10) > 7;
+
+		return rand.nextFloat() < 0.95;
 	}
+
 
 	/**
 	 * @return

@@ -66,7 +66,7 @@
               <background color="-1"/>
               <enabled value="true"/>
               <foreground color="-16777216"/>
-              <text value=""/>
+              <text value="1000"/>
             </properties>
           </component>
           <component id="98712" class="javax.swing.JLabel" binding="maxRacersNumberLabel">
@@ -88,7 +88,7 @@
               <background color="-1"/>
               <editable value="true"/>
               <enabled value="true"/>
-              <text value=""/>
+              <text value="8"/>
             </properties>
           </component>
           <component id="e6d41" class="javax.swing.JButton" binding="buildArenaButton" default-binding="true">
@@ -98,7 +98,9 @@
             <properties>
               <background color="-1"/>
               <enabled value="false"/>
+              <font style="1"/>
               <foreground color="-16777216"/>
+              <hideActionText value="false"/>
               <text value="Build Arena"/>
             </properties>
           </component>
@@ -183,6 +185,7 @@
                 <properties>
                   <background color="-1"/>
                   <foreground color="-16777216"/>
+                  <text value="Or Hava"/>
                 </properties>
               </component>
               <component id="9737b" class="javax.swing.JLabel" binding="maxSpeedLabel">
@@ -203,6 +206,7 @@
                 <properties>
                   <background color="-1"/>
                   <foreground color="-16777216"/>
+                  <text value="500"/>
                 </properties>
               </component>
               <component id="9a1e6" class="javax.swing.JLabel" binding="accelerationLabel">
@@ -223,6 +227,7 @@
                 <properties>
                   <background color="-1"/>
                   <foreground color="-16777216"/>
+                  <text value="75"/>
                 </properties>
               </component>
               <component id="87b61" class="javax.swing.JButton" binding="addRacerButton" default-binding="true">
@@ -232,6 +237,7 @@
                 <properties>
                   <background color="-1"/>
                   <enabled value="false"/>
+                  <font style="1"/>
                   <foreground color="-16777216"/>
                   <text value="Add racer"/>
                 </properties>
@@ -253,6 +259,7 @@
                     <properties>
                       <background color="-1"/>
                       <enabled value="false"/>
+                      <font style="1"/>
                       <foreground color="-16777216"/>
                       <text value="Start race"/>
                     </properties>
@@ -264,6 +271,7 @@
                     <properties>
                       <background color="-1"/>
                       <enabled value="false"/>
+                      <font style="1"/>
                       <foreground color="-16777216"/>
                       <text value="Show info"/>
                     </properties>

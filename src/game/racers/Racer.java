@@ -1,184 +1,52 @@
 package game.racers;
+import java.util.Observable;
 
 import game.arenas.Arena;
 import utilities.EnumContainer;
+import utilities.EnumContainer.RacerEvent;
 import utilities.Fate;
 import utilities.Mishap;
 import utilities.Point;
-
-import java.util.Observable;
-
-
+/** @author Or Hava 208418483
+ */
 public abstract class Racer extends Observable implements Runnable {
-    private static int  count = 0;
-    private int serialNumber;
+    protected static int lastSerialNumber = 1;
 
+    public static int getLastSerialNumber() {
+        return lastSerialNumber++;
+    }
 
+    private int serialNumber; // Each racer has an unique number, assigned by arena in addRacer() method
     private String name;
     private Point currentLocation;
     private Point finish;
-    private Arena arena;
     private double maxSpeed;
     private double acceleration;
     private double currentSpeed;
-    private double failureProbability;
-    private EnumContainer.Color color;
+    private double failureProbability; // Chance to break down
+    private EnumContainer.Color color; // (RED,GREEN,BLUE,BLACK,YELLOW)
     private Mishap mishap;
     private double arenaFriction;
+    private Arena arena;
 
     /**
-     @param name The name of the Racer.
-     @param maxSpeed The maximum speed of the Racer.
-     @param acceleration The acceleration of the Racer.
-     @param color The color of the Racer.
+     * @param name
+     * @param maxSpeed
+     * @param acceleration
+     * @param color
      */
-    public Racer(String name,double maxSpeed,double acceleration,EnumContainer.Color color){
-        count++;
-        serialNumber = count;
-
-        this.name = name;
-        this.currentLocation = new Point(0, 0); // default value
-        this.finish = new Point(0, 0); // default value
-        this.arena = null; // default value
-        this.maxSpeed = maxSpeed;
-        this.acceleration = acceleration;
-        this.currentSpeed = 0; // default value
-        this.failureProbability = 0.1; // default value
-        this.color = color;
-        this.mishap = null; // default value
+    public Racer(String name, double maxSpeed, double acceleration, utilities.EnumContainer.Color color) {
+        this.setSerialNumber( Racer.getLastSerialNumber());
+        this.setName(name);
+        this.setMaxSpeed(maxSpeed);
+        this.setAcceleration(acceleration);
+        this.setColor(color);
+        this.setFailureProbability(0.2);
 
     }
 
-    public Racer(){
+    public abstract String className();
 
-
-        this.name = null;
-        this.currentLocation = new Point(0, 0); // default value
-        this.finish = new Point(0, 0); // default value
-        this.arena = null; // default value
-        this.maxSpeed = maxSpeed;
-        this.acceleration = acceleration;
-        this.currentSpeed = 0; // default value
-        this.failureProbability = 0; // default value
-        this.color = null;
-        this.mishap = null; // default value
-    }
-
-    /**
-     * @param arena    The arena the Racer is racing in.
-     * @param start    The starting point of the Racer.
-     * @param finish   The finish point of the Racer.
-     * @param FRICTION
-     */
-    public void initRace(Arena arena, Point start, Point finish, double FRICTION){
-        this.arena=arena;
-        this.setCurrentLocation (new Point(start));
-        this.setFinish(new Point(finish));
-        this.arenaFriction=FRICTION;
-
-
-    }
-
-    /**
-
-     Moves the Racer a distance based on its current speed, acceleration, and friction.
-     Also updates the Racer's mishap status and calculates its reduction factor.
-     @param friction The friction of the surface the Racer is currently on.
-     @return The Racer's new location.
-     */
-    public Point Move(double friction) {
-        double reductionFactor = 1;
-        if (this.mishap == null || (mishap.isFixable() && mishap.getTurnsToFix() == 0)) {
-            mishap = null;
-            if (Fate.breakDown(this.failureProbability)) {
-                this.mishap = Fate.generateMishap();
-                System.out.println(this.getName() + " Has a new mishap!: " + mishap);
-                mishap.nextTurn();
-                reductionFactor = mishap.getReductionFactor();
-            }
-        } else if (mishap.isFixable()) {
-            mishap.nextTurn();
-            reductionFactor = mishap.getReductionFactor();
-        } else {
-            reductionFactor = mishap.getReductionFactor();
-        }
-
-        if (this.currentSpeed < this.maxSpeed) {
-            this.setCurrentSpeed(this.currentSpeed + this.acceleration * friction * reductionFactor);
-        }
-
-        if (this.currentSpeed > this.maxSpeed) {
-            this.setCurrentSpeed(this.maxSpeed);
-        }
-
-        Point newPoint = new Point((this.currentLocation.getX() + (1 * this.currentSpeed)), this.currentLocation.getY());
-        this.setCurrentLocation(newPoint);
-        return newPoint;
-    }
-
-    public void move() {
-        double reductionFactor = 1;
-        if (!(this.hasMishap()) && Fate.breakDown(this.failureProbability)) {
-            this.mishap = Fate.generateMishap();
-            this.setChanged();
-            System.out.println(this.name + " Has a new mishap! (" + this.mishap + ")");
-            if (this.isDisabled()) {
-                notifyObservers(EnumContainer.RacerEvent.DISABLED);
-                return;
-            } else {
-                this.notifyObservers(EnumContainer.RacerEvent.BROKENDOWN);
-            }
-        }
-
-        if (this.hasMishap()) {
-            reductionFactor = mishap.getReductionFactor();
-            this.mishap.nextTurn();
-        }
-
-        if (this.currentSpeed < this.maxSpeed) {
-            this.setCurrentSpeed(this.currentSpeed + this.acceleration * this.arenaFriction);
-        }
-
-        double newX = (this.currentLocation.getX() + this.currentSpeed) * reductionFactor;
-        Point newLocation = new Point(newX, this.currentLocation.getY());
-        this.setCurrentLocation(newLocation);
-    }
-
-    private boolean isDisabled() {
-        if (this.mishap != null) {
-            return this.mishap.isFixable() == false;
-        }
-        return false;
-    }
-
-    private boolean hasMishap() {
-        if (this.mishap != null && this.mishap.getTurnsToFix() == 0) {
-            this.setMishap(null);
-            this.setChanged();
-            this.notifyObservers(EnumContainer.RacerEvent.REPAIRED);
-        }
-        return this.mishap != null;
-    }
-    private boolean raceInPrograss() {
-        return this.currentLocation.getX() < this.finish.getX();
-    }
-    @Override
-    public void run() {
-        while (this.raceInPrograss() && !this.isDisabled()) {
-            System.out.println("*************************************run of racer work: ****************************************************" );
-            this.move();
-            // DEV disable sleep
-            // try {
-            // Thread.sleep(100);
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
-        }
-        if (this.isDisabled())
-            return;
-        setChanged();
-        this.notifyObservers(EnumContainer.RacerEvent.FINISHED);
-    }
 
     /**
      * @return describe of Specific Racer
@@ -208,7 +76,7 @@ public abstract class Racer extends Observable implements Runnable {
      */
     public String describeRacerToResults() {
 
-      return "name: "+getName()+", SerialNumber: "+getSerialNumber()+
+        return "name: "+getName()+", SerialNumber: "+getSerialNumber()+
                 ", maxSpeed: "+getMaxSpeed()+", acceleration: "+
                 getAcceleration()+", color: "+
                 getColor().toString()+describeSpecific();
@@ -223,187 +91,192 @@ public abstract class Racer extends Observable implements Runnable {
         System.out.println(describeRacerToResults());
     }
 
-    /**
-     * @return
-     */
-    public String className() {
-        return this.getClass().getSimpleName();
-    }
 
-    /**
-     * @return
-     */
-//    public boolean hasMishap() {
-//        return mishap != null;
-//    }
-
-
-    /**
-     * @return
-     */
-    public  int getSerialNumber() {
-        return serialNumber;
-    }
-
-    /**
-     * @param serialNumber
-     */
-    public void setSerialNumber(int serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    /**
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    /**
-     * @return
-     */
-    public Point getCurrentLocation() {
-        return currentLocation;
-    }
-
-    /**
-     * @param currentLocation
-     */
-    public void setCurrentLocation(Point currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
-    /**
-     * @return
-     */
-    public Point getFinish() {
-        return finish;
-    }
-
-
-    /**
-     * @return
-     */
-    public static int getCount() {
-        return count;
-    }
-
-
-    /**
-     * @param finish
-     */
-    public void setFinish(Point finish) {
-        this.finish = finish;
-    }
-
-    /**
-     * @return
-     */
-    public Arena getArena() {
-        return arena;
-    }
-
-    /**
-     * @param arena
-     */
-    public void setArena(Arena arena) {
-        this.arena = arena;
-    }
-
-
-    /**
-     * @return
-     */
-    public double getCurrentSpeed() {
-        return currentSpeed;
-    }
-
-
-    /**
-     * @param currentSpeed
-     */
-    public void setCurrentSpeed(double currentSpeed) {
-        this.currentSpeed = currentSpeed;
-    }
-
-    /**
-     * @return
-     */
     public double getAcceleration() {
         return acceleration;
     }
 
-
-    /**
-     * @param acceleration
-     */
-    public void setAcceleration(double acceleration) {
-        this.acceleration = acceleration;
+    public Arena getArena() {
+        return arena;
     }
 
-    /**
-     * @return
-     */
-    public double getMaxSpeed() {
-        return maxSpeed;
+    public double getArenaFriction() {
+        return arenaFriction;
     }
 
-
-    /**
-     * @param maxSpeed
-     */
-    public void setMaxSpeed(double maxSpeed) {
-        this.maxSpeed = maxSpeed;
-    }
-
-    /**
-     * @return
-     */
-    public double getFailureProbability() {
-        return failureProbability;
-    }
-
-
-    /**
-     * @param failureProbability
-     */
-    public void setFailureProbability(double failureProbability) {
-        this.failureProbability = failureProbability;
-    }
-
-    /**
-     * @return
-     */
     public EnumContainer.Color getColor() {
         return color;
     }
 
-    /**
-     * @param color
-     */
-    public void setColor(EnumContainer.Color color) {
-        this.color = color;
+    public Point getCurrentLocation() {
+        return currentLocation;
     }
 
-    /**
-     * @return
-     */
+    public double getCurrentSpeed() {
+        return currentSpeed;
+    }
+
+    public double getFailureProbability() {
+        return failureProbability;
+    }
+
+    public Point getFinish() {
+        return finish;
+    }
+
+    public Point getLocation() {
+        return this.currentLocation;
+    }
+
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+
     public Mishap getMishap() {
         return mishap;
     }
 
-    /**
-     * @param mishap
-     */
+    public String getName() {
+        return name;
+    }
+
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    private boolean hasMishap() {
+        if (this.mishap != null && this.mishap.getTurnsToFix() == 0) {
+            this.setMishap(null);
+            this.setChanged();
+            this.notifyObservers(RacerEvent.REPAIRED);
+        }
+        return this.mishap != null;
+    }
+
+    public void initRace(Arena arena, Point start, Point finish, double friction) {
+        this.setArena (arena);
+        this.setCurrentLocation (new Point(start));
+        this.setFinish(new Point(finish));
+        this.setArenaFriction(friction);
+    }
+
+
+
+    private boolean isDisabled() {
+        if (this.mishap != null) {
+            return !this.mishap.isFixable();
+        }
+        return false;
+    }
+
+    public void move() {
+        double reductionFactor = 1;
+        if (!(this.hasMishap()) && Fate.breakDown(this.failureProbability)) {
+            this.mishap = Fate.generateMishap();
+            this.setChanged();
+            System.out.println(this.name + " Has a new mishap! (" + this.mishap + ")");
+            if (this.isDisabled()) {
+                notifyObservers(RacerEvent.DISABLED);
+                return;
+            } else {
+                this.notifyObservers(RacerEvent.BROKENDOWN);
+            }
+        }
+
+        if (this.hasMishap()) {
+            reductionFactor = mishap.getReductionFactor();
+            this.mishap.nextTurn();
+        }
+
+        if (this.currentSpeed < this.maxSpeed) {
+            this.setCurrentSpeed(this.currentSpeed + this.acceleration * this.arenaFriction);
+        }
+
+
+
+        Point newPoint = new Point((this.currentLocation.getX() + (1 * this.currentSpeed) * reductionFactor), this.currentLocation.getY());
+        System.out.println("place: " + this.currentLocation.getX() + (1 * this.currentSpeed));
+
+        this.setCurrentLocation(newPoint);
+
+    }
+    private boolean raceInPrograss() {
+        return this.currentLocation.getX() < this.finish.getX();
+    }
+
+    @Override
+    public void run() {
+
+        while (this.raceInPrograss() && !this.isDisabled()) {
+            this.move();
+
+               try {
+             Thread.sleep(100);
+             } catch (InterruptedException e) {
+             e.printStackTrace();
+             }
+        }
+        if (this.isDisabled())
+            return;
+        setChanged();
+        this.notifyObservers(RacerEvent.FINISHED);
+    }
+
+    public void setAcceleration(double acceleration) {
+        this.acceleration = acceleration;
+    }
+
+    public void setArena(Arena arena) {
+        this.arena = arena;
+    }
+
+    private void setArenaFriction(double friction) {
+        this.arenaFriction = friction;
+    }
+
+    public void setColor(EnumContainer.Color color) {
+        this.color = color;
+    }
+
+    public void setCurrentLocation(Point currentLocation) {
+        if (this.finish != null && currentLocation.getX() > finish.getX()) {
+            currentLocation.setX(finish.getX());
+        }
+        this.currentLocation = currentLocation;
+    }
+
+    private void setCurrentSpeed(double currentSpeed) {
+        if (currentSpeed > this.maxSpeed)
+            currentSpeed = this.maxSpeed;
+        this.currentSpeed = currentSpeed;
+    }
+
+    public void setFailureProbability(double failureProbability) {
+        if (failureProbability >= 0 && failureProbability <= 1)
+            this.failureProbability = failureProbability;
+    }
+
+    public void setFinish(Point finish) {
+        this.finish = finish;
+    }
+
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
     public void setMishap(Mishap mishap) {
         this.mishap = mishap;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSerialNumber(int serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public boolean hasFinished() {
+        return this.currentLocation.getX() < this.finish.getX();
     }
 }

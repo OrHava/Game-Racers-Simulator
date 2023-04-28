@@ -3,12 +3,13 @@ package game.racers.air;
 import game.racers.Racer;
 import game.racers.Wheeled;
 import utilities.EnumContainer;
-
+/** @author Or Hava 208418483
+ */
 public class Helicopter extends Racer implements  AerialRacer{
-    public static final String CLASS_NAME = "Helicopter";
-    public static final double DEFAULT_MAX_SPEED = 400;
-    public static final double DEFAULT_ACCELERATION = 50;
-    public static final EnumContainer.Color DEFAULT_COLOR = EnumContainer.Color.BLUE;
+    private static final String CLASS_NAME = "Helicopter";
+    private static final double DEFAULT_MAX_SPEED = 400;
+    private static final double DEFAULT_ACCELERATION = 50;
+    private static final EnumContainer.Color DEFAULT_COLOR = EnumContainer.Color.BLUE;
 
 
     public Helicopter() {
@@ -34,5 +35,12 @@ public class Helicopter extends Racer implements  AerialRacer{
         return "";
 
     }
+
+
+    @Override
+    public String className() {
+        return CLASS_NAME;
+    }
+
 
 }

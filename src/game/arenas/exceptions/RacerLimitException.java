@@ -1,5 +1,6 @@
 package game.arenas.exceptions;
-
+/** @author Or Hava 208418483
+ */
 public class RacerLimitException extends Exception {
     /**
      * @param ActiveRacers Amount of Racers in the Arena.

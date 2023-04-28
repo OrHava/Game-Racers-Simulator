@@ -2,7 +2,8 @@ package game.arenas.naval;
 
 import game.arenas.Arena;
 import utilities.EnumContainer;
-
+/** @author Or Hava 208418483
+ */
 public class NavalArena extends Arena {
     private final static double DEFAULT_FRICTION=0.7;
     private final static int DEFAULT_MAX_RACER=5;

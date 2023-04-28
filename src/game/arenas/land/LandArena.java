@@ -3,7 +3,8 @@ package game.arenas.land;
 import game.arenas.Arena;
 import utilities.EnumContainer;
 
-
+/** @author Or Hava 208418483
+ */
 public class LandArena extends Arena {
     private final static double DEFAULT_FRICTION=0.5;
     private final static int DEFAULT_MAX_RACER=8;

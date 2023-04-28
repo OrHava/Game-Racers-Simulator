@@ -14,7 +14,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Objects;
-
+/** @author Or Hava 208418483
+ */
 public class Race extends JFrame {
     private JComboBox comboBoxArena;
     private JPanel Panel1;
@@ -62,13 +63,13 @@ public class Race extends JFrame {
     private JPanel PanelRacer18;
     private JPanel PanelRacer19;
     private JPanel PanelRacer20;
-    static Race race ;
-    private static RaceBuilder builder = RaceBuilder.getInstance();
-    private static ArrayList<Racer> racers;
+    private static Race race ;
+    private static final RaceBuilder builder = RaceBuilder.getInstance();
+    private static final ArrayList<Racer> racers = new ArrayList<>();
     private int arenaLength = 1000;
 
-    ArrayList<String> racersImages = new ArrayList<String>();
-    private int arenaHeight = 700;
+    private final ArrayList<String> racersImages = new ArrayList<>();
+    private static final ArrayList<JPanel> racersJPanel = new ArrayList<>();
     private int maxRacers = 8;
     private int racersNumber = 0;
     private Arena arena = null;
@@ -80,10 +81,16 @@ public class Race extends JFrame {
     public Race() {
 
         buildArenaButton.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
 
+                for(Component c : race.PanelArena.getComponents()) {
+                    if((c instanceof JPanel)) {
+                        race.PanelArena.setVisible(true);
+                    }
+                }
                 if (raceStarted && !raceFinished) {
                     JOptionPane.showMessageDialog(race, "Race started! Please wait.");
                     return;
@@ -102,12 +109,15 @@ public class Race extends JFrame {
                 String chosenArena = Objects.requireNonNull(comboBoxArena.getSelectedItem()).toString();
                 try {
                     loadImageArena(Objects.requireNonNull(comboBoxArena.getSelectedItem()).toString());
-                    if (chosenArena.equals("AerialArena")) {
-                        arena = builder.buildArena("game.arenas.air.AerialArena", arenaLength, maxRacers);
-                    } else if (chosenArena.equals("LandArena")) {
-                        arena = builder.buildArena("game.arenas.land.LandArena", arenaLength, maxRacers);
-                    } else if (chosenArena.equals("NavalArena")) {
-                        arena = builder.buildArena("game.arenas.naval.NavalArena", arenaLength, maxRacers);
+
+
+                    switch (chosenArena) {
+                        case "AerialArena" ->
+                                arena = builder.buildArena("game.arenas.air.AerialArena", arenaLength, maxRacers);
+                        case "LandArena" ->
+                                arena = builder.buildArena("game.arenas.land.LandArena", arenaLength, maxRacers);
+                        case "NavalArena" ->
+                                arena = builder.buildArena("game.arenas.naval.NavalArena", arenaLength, maxRacers);
                     }
                 } catch (Exception ex) {
                     System.out.println(ex);
@@ -120,9 +130,11 @@ public class Race extends JFrame {
             }
         });
         addRacerButton.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
+
 
                 if (raceFinished) {
                     JOptionPane.showMessageDialog(race, "Race finished, Please make a new arena.");
@@ -143,7 +155,7 @@ public class Race extends JFrame {
                 String name;
                 double maxSpeed;
                 double acceleration;
-                racers = new ArrayList<>();
+
                 try {
                     name = textFieldName.getText();
                     maxSpeed = Double.parseDouble(textFieldMaxSpeed.getText());
@@ -158,45 +170,44 @@ public class Race extends JFrame {
                 String racerType = (String) comboBoxRacer.getSelectedItem();
 
                 String color = (String) comboBoxRacerColor.getSelectedItem();
-                utilities.EnumContainer.Color col = null;
-                if (color.equals("Red"))
-                    col = EnumContainer.Color.RED;
-                else if (color.equals("Black"))
-                    col = EnumContainer.Color.BLACK;
-                else if (color.equals("Green"))
-                    col = EnumContainer.Color.GREEN;
-                else if (color.equals("Blue"))
-                    col = EnumContainer.Color.BLUE;
-                else if (color.equals("Yellow"))
-                    col = EnumContainer.Color.YELLOW;
+                EnumContainer.Color col = null;
+                if (color != null) {
+                    col = switch (color) {
+                        case "Red" -> EnumContainer.Color.RED;
+                        case "Black" -> EnumContainer.Color.BLACK;
+                        case "Green" -> EnumContainer.Color.GREEN;
+                        case "Blue" -> EnumContainer.Color.BLUE;
+                        case "Yellow" -> EnumContainer.Color.YELLOW;
+                        default -> null;
+                    };
+                }
 
                 String racerClass = null;
-                if (racerType.equals("Helicopter"))
-                    racerClass = "game.racers.air.Helicopter";
-                else if (racerType.equals("Airplane"))
-                    racerClass = "game.racers.air.Airplane";
-                else if (racerType.equals("Car"))
-                    racerClass = "game.racers.land.Car";
-                else if (racerType.equals("Horse"))
-                    racerClass = "game.racers.land.Horse";
-                else if (racerType.equals("Bicycle"))
-                    racerClass = "game.racers.land.Bicycle";
-                else if (racerType.equals("SpeedBoat"))
-                    racerClass = "game.racers.naval.SpeedBoat";
-                else if (racerType.equals("RowBoat"))
-                    racerClass = "game.racers.naval.RowBoat";
+                if (racerType != null) {
+                    racerClass = switch (racerType) {
+                        case "Helicopter" -> "game.racers.air.Helicopter";
+                        case "Airplane" -> "game.racers.air.Airplane";
+                        case "Car" -> "game.racers.land.Car";
+                        case "Horse" -> "game.racers.land.Horse";
+                        case "Bicycle" -> "game.racers.land.Bicycle";
+                        case "SpeedBoat" -> "game.racers.naval.SpeedBoat";
+                        case "RowBoat" -> "game.racers.naval.RowBoat";
+                        default -> null;
+                    };
+                }
 
                 try {
-                    if(racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")){
-                        Racer racer = builder.buildWheeledRacer(racerClass, name, maxSpeed, acceleration, col,2);
-                        System.out.println("racer been added: " + racer.toString());
-                        arena.addRacer(racer);
-                        arena.initRace();
-                        racers.add(racer);
-                    }
-                    else{
-                        Racer racer = builder.buildRacer(racerClass, name, maxSpeed, acceleration, col);
-                        System.out.println("racer been added: " + racer.toString());
+                    if (racerType != null) {
+                        Racer racer;
+                        if(racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")){
+                            racer = builder.buildWheeledRacer(racerClass, name, maxSpeed, acceleration, col, 2);
+
+                        }
+                        else{
+                            racer = builder.buildRacer(racerClass, name, maxSpeed, acceleration, col);
+
+                        }
+
                         arena.addRacer(racer);
                         arena.initRace();
                         racers.add(racer);
@@ -212,8 +223,8 @@ public class Race extends JFrame {
 
 
 
-                racersImages.add(Objects.requireNonNull(comboBoxRacer.getSelectedItem()).toString()+ comboBoxRacerColor.getSelectedItem().toString());
-                loadImageRacer(Objects.requireNonNull(comboBoxRacer.getSelectedItem()).toString()+ comboBoxRacerColor.getSelectedItem().toString(),racersNumber+1);
+                racersImages.add(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + Objects.requireNonNull(comboBoxRacerColor.getSelectedItem()).toString());
+                loadImageRacer(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + comboBoxRacerColor.getSelectedItem().toString(),racersNumber+1);
 
 
 
@@ -237,85 +248,69 @@ public class Race extends JFrame {
                 }
                 if (raceStarted) {
                     JOptionPane.showMessageDialog(race, "Race already started!");
-                    return;
                 }
                 else{
 
 
 
-                    raceStarted = true;
-
-
-
-
-
-
-//
-//                    SwingUtilities.invokeLater(new Runnable() {
-//                        public void run() {
-//                            try {
-//                                arena.startRace();
-//                            } catch (InterruptedException ex) {
-//                                throw new RuntimeException(ex);
-//                            }
-//                            // Set the initial panel position and show the frame
-//
-//                            setLocationRelativeTo(null);
-//                            setVisible(true);
-//
-//                            raceStarted = true;
-//                            // Update the panel position in a loop with Thread.sleep()
-//                            new Thread(new Runnable() {
-//                                public void run() {
-//                                    try {
-//                                        while ((int) racers.get(0).getCurrentLocation().getX() <= getWidth()) {
-//
-//                                            PanelRacer1.setLocation((int) racers.get(0).getCurrentLocation().getX() + 5, 0);
-//                                            PanelRacer1.repaint();
-//                                            System.out.println("Position: " + (int) racers.get(0).getCurrentLocation().getX());
-//                                            Thread.sleep(30);
-//                                        }
-//                                        raceFinished = true;
-//                                    } catch (InterruptedException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }).start();
-//
-//                        }
-//                    });
-
-                    try {
-                        raceStarted = true;
-                        (new Thread() {
-                            public void run() {
-                                while (arena.hasActiveRacers()) {
-                                    try {
-                                        Thread.sleep(30);
-                                    } catch (InterruptedException ex) {
-                                        ex.printStackTrace();
-                                    }
-                                    System.out.println("Position: " + (int) racers.get(0).getCurrentLocation().getX());
-                                }
-
-                                raceFinished = true;
-                            }
-                        }).start();
-                        arena.startRace();
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
+                    int arenaWidth = (int) arena.getLength();
+                    int racerPanelWidth = racersJPanel.get(0).getWidth();
+                    int startingX = (arenaWidth - racerPanelWidth) / 2;
+                    for (JPanel jPanel : racersJPanel) {
+                        jPanel.setLocation(startingX, jPanel.getY());
                     }
 
-//                    for (int i = 0; i < racersNumber; i++) {
-//                        JLabel picLabel2 = new JLabel(racersImages[i]);
-//                        if(racers.get(i)!=null){
-//                            picLabel2.setLocation((int) racers.get(i).getLocation().getX() + 5,
-//                                    (int) racers.get(i).getLocation().getY());
-//                            picLabel2.setSize(70, 70);
-//                            picLabel1.add(picLabel2);
-//                        }
-//
-//                    }
+                    setLocationRelativeTo(null);
+                    setVisible(true);
+                    raceStarted = true;
+
+                    Thread raceThread = new Thread(() -> {
+                        int panelArenaLength = race.PanelArena.getWidth()-race.PanelRacer1.getWidth();
+                        int arenaLength = (int) arena.getLength();
+                        double ratio = (double) panelArenaLength / (double) arenaLength;
+                        Timer timer = new Timer(30, new ActionListener() {
+                            int i = 0;
+
+                            @Override
+                            public void actionPerformed(ActionEvent e1) {
+                                i=0;
+                                for (int i = 0; i < racersJPanel.size(); i++) {
+                                    JPanel jPanel = racersJPanel.get(i);
+                                    jPanel.setLocation((int) (racers.get(i).getCurrentLocation().getX() * ratio), jPanel.getY());
+                                    jPanel.repaint();
+                                    System.out.println("ratio: " + (int) ratio);
+                                    System.out.println("getCurrentLocation: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio));
+                                    System.out.println("racer place: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio) + " index: "+ i);
+                                }
+
+                                if (arena.getCompleatedRacers().size() + arena.getDisabledRacers().size() == racers.size()) {
+                                    ((Timer) e1.getSource()).stop();
+
+                                    for (int i = 0; i < racersJPanel.size(); i++) {
+                                        JPanel jPanel = racersJPanel.get(i);
+                                        jPanel.setLocation((int) (racers.get(i).getCurrentLocation().getX() * ratio), jPanel.getY());
+                                        jPanel.repaint();
+                                    }
+
+                                    raceFinished = true;
+                                }
+                            }
+                        });
+
+                        timer.start();
+                        try {
+                            arena.startRace();
+                        } catch (InterruptedException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+
+                    raceThread.start();
+
+
+
+
+
                 }
 
             }
@@ -331,37 +326,37 @@ public class Race extends JFrame {
                 String[] columnNames = { "Racer name", "Current speed", "Max speed", "Current X location", "Finished" };
                 String[][] data = new String[racersNumber][5];
                 int i = 0;
-                for (Racer r : arena.getCompleatedRacers()) {
-                    data[i][0] = r.getName();
-                    data[i][1] = "" + r.getCurrentSpeed();
-                    data[i][2] = "" + r.getMaxSpeed();
-                    data[i][3] = "" + r.getCurrentLocation().getX();
-                    data[i][4] = "COMP";
+                for (Racer racer : arena.getCompleatedRacers()) {
+                    data[i][0] = racer.getName();
+                    data[i][1] = "" + racer.getCurrentSpeed();
+                    data[i][2] = "" + racer.getMaxSpeed();
+                    data[i][3] = "" + racer.getCurrentLocation().getX();
+                    data[i][4] = "Yes";
                     i++;
                 }
 
-                for (Racer r : arena.getActiveRacers()) {
-                    data[i][0] = r.getName();
-                    data[i][1] = "" + r.getCurrentSpeed();
-                    data[i][2] = "" + r.getMaxSpeed();
-                    data[i][3] = "" + r.getCurrentLocation().getX();
-                    data[i][4] = "Active";
+                for (Racer racer : arena.getActiveRacers()) {
+                    data[i][0] = racer.getName();
+                    data[i][1] = "" + racer.getCurrentSpeed();
+                    data[i][2] = "" + racer.getMaxSpeed();
+                    data[i][3] = "" + racer.getCurrentLocation().getX();
+                    data[i][4] = "No, Its Still In the race.";
                     i++;
                 }
-                for (Racer r : arena.getBrokenRacers()) {
-                    data[i][0] = r.getName();
-                    data[i][1] = "" + r.getCurrentSpeed();
-                    data[i][2] = "" + r.getMaxSpeed();
-                    data[i][3] = "" + r.getCurrentLocation().getX();
-                    data[i][4] = "BROK";
+                for (Racer racer : arena.getBrokenRacers()) {
+                    data[i][0] = racer.getName();
+                    data[i][1] = "" + racer.getCurrentSpeed();
+                    data[i][2] = "" + racer.getMaxSpeed();
+                    data[i][3] = "" + racer.getCurrentLocation().getX();
+                    data[i][4] = "No, its Broken.";
                     i++;
                 }
-                for (Racer r : arena.getDisabledRacers()) {
-                    data[i][0] = r.getName();
-                    data[i][1] = "" + r.getCurrentSpeed();
-                    data[i][2] = "" + r.getMaxSpeed();
-                    data[i][3] = "" + r.getCurrentLocation().getX();
-                    data[i][4] = "DIS";
+                for (Racer racer : arena.getDisabledRacers()) {
+                    data[i][0] = racer.getName();
+                    data[i][1] = "" + racer.getCurrentSpeed();
+                    data[i][2] = "" + racer.getMaxSpeed();
+                    data[i][3] = "" + racer.getCurrentLocation().getX();
+                    data[i][4] = "No, its Disabled.";
                     i++;
                 }
 
@@ -392,9 +387,22 @@ public class Race extends JFrame {
 
         race.setContentPane(race.Panel1);
         race.setTitle("Hello Racers");
-        race.setSize(1500,1000);
+        race.setSize(1200,700);
         race.setVisible(true);
         race.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        for (Component c : race.PanelArena.getComponents()) {
+            if (c instanceof JPanel) {
+                ((JPanel) c).setOpaque(false);
+            }
+        }
+
+        for(Component c : race.PanelArena.getComponents()) {
+
+            if((c instanceof JPanel)) {
+                race.PanelArena.setVisible(false);
+
+            }
+        }
 
 
 
@@ -407,137 +415,66 @@ public class Race extends JFrame {
     }
 
 
+    /**
+     * @param ArenaType
+     */
     private static void loadImageArena(String ArenaType) {
         ImageIcon icon = new ImageIcon("src/GUI/Race/Pictures/"+ArenaType+".jpg");
         JLabel label = new JLabel();
-        // Set the layout of PanelRace to null
+
+        for(Component c : race.PanelArena.getComponents()) {
+            if((c instanceof JLabel)) {
+                race.PanelArena.remove(c);
+            }
+        }
         race.PanelArena.setLayout(null);
-        // Set the bounds of the JLabel to cover the entire PanelArena
         label.setBounds(0, 0, race.PanelArena.getWidth(), race.PanelArena.getHeight());
-        // Get the Image object from the ImageIcon
         Image image = icon.getImage();
-        // Scale the Image to fit the size of the JLabel
         Image scaledImage = image.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
-        // Set the scaled Image as the Icon for the JLabel
         label.setIcon(new ImageIcon(scaledImage));
 
 
-        // Add the JLabel object to the existing JPanel using the add() method
         race.PanelArena.add(label);
-        // Set the size of PanelArena to match the size of the image
         race.PanelArena.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
-       // race.PanelArena.setComponentZOrder(label, 1);
         race.PanelArena.revalidate();
         race.PanelArena.repaint();
-        System.out.println("label size: " + label.getSize());
-        System.out.println("PanelArena size: " + race.PanelArena.getSize());
-        System.out.println("Parent container visibility: " + race.PanelArena.getParent().isVisible());
+
     }
 
+
+    /**
+     * @param Typeandcolor 
+     * @param panelIndex
+     */
     private static void loadImageRacer(String Typeandcolor, int panelIndex) {
+        JPanel[] PANEL_RACERS = {
+                race.PanelRacer1, race.PanelRacer2, race.PanelRacer3, race.PanelRacer4,
+                race.PanelRacer5, race.PanelRacer6, race.PanelRacer7, race.PanelRacer8,
+                race.PanelRacer9, race.PanelRacer10, race.PanelRacer11, race.PanelRacer12,
+                race.PanelRacer13, race.PanelRacer14, race.PanelRacer15, race.PanelRacer16,
+                race.PanelRacer17, race.PanelRacer18, race.PanelRacer19, race.PanelRacer20
+        };
         String imagePath = "src/GUI/Race/Pictures/" + Typeandcolor + ".png";
         ImageIcon icon = new ImageIcon(imagePath);
         JLabel label = new JLabel();
-        JPanel panel = null;
-        // Determine which panel to update based on the panelIndex argument
-        switch (panelIndex) {
-            case 1:
-                panel = race.PanelRacer1;
-                break;
-            case 2:
-                panel = race.PanelRacer2;
-                break;
-            case 3:
-                panel = race.PanelRacer3;
-                break;
-            case 4:
-                panel = race.PanelRacer4;
-                break;
-            case 5:
-                panel = race.PanelRacer5;
-                break;
-            case 6:
-                panel = race.PanelRacer6;
-                break;
-            case 7:
-                panel = race.PanelRacer7;
-                break;
-            case 8:
-                panel = race.PanelRacer8;
-                break;
-            case 9:
-                panel = race.PanelRacer9;
-                break;
-            case 10:
-                panel = race.PanelRacer10;
-                break;
-            case 11:
-                panel = race.PanelRacer11;
-                break;
-            case 12:
-                panel = race.PanelRacer12;
-                break;
-            case 13:
-                panel = race.PanelRacer13;
-                break;
-            case 14:
-                panel = race.PanelRacer14;
-                break;
-            case 15:
-                panel = race.PanelRacer15;
-                break;
-            case 16:
-                panel = race.PanelRacer16;
-                break;
-            case 17:
-                panel = race.PanelRacer17;
-                break;
-            case 18:
-                panel = race.PanelRacer18;
-                break;
-            case 19:
-                panel = race.PanelRacer19;
-                break;
-            case 20:
-                panel = race.PanelRacer20;
-                break;
+        JPanel panel = PANEL_RACERS[panelIndex - 1];
+        racersJPanel.add(panel);
 
 
-        }
-        // Set the layout of the panel to null
-        assert panel != null;
         panel.setLayout(null);
-        // Set the bounds of the JLabel to cover the entire panel
         label.setBounds(0, 0, panel.getWidth(), panel.getHeight());
-        // Get the Image object from the ImageIcon
         Image image = icon.getImage();
-        // Scale the Image to fit the size of the JLabel
         Image scaledImage = image.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
-        // Set the scaled Image as the Icon for the JLabel
         label.setIcon(new ImageIcon(scaledImage));
-        // Add the JLabel object to the panel using the add() method
         panel.removeAll();
         panel.add(label);
-        // Set the size of the panel to match the size of the image
         panel.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
-        //panel.setComponentZOrder(label, 0);
-
         panel.revalidate();
         panel.repaint();
-        System.out.println("label size: " + label.getSize());
-        System.out.println("panel size: " + panel.getSize());
-        System.out.println("Parent container visibility: " + panel.getParent().isVisible());
-    }
-
-
-    public static void MoveRacers(){
-
-
-
-        race.PanelRacer1.setLocation(new Point(race.PanelRacer1.getX()+200, race.PanelRacer1.getY()));
-
 
     }
+
+
 
 
 }

@@ -3,13 +3,14 @@ package game.racers.air;
 import game.racers.Racer;
 import game.racers.Wheeled;
 import utilities.EnumContainer;
-
+/** @author Or Hava 208418483
+ */
 public class Airplane extends Racer implements AerialRacer  {
     private static final String CLASS_NAME = "Airplane";
     private static final int DEFAULT_WHEELS=3;
-    static final double  DEFAULT_MAX_SPEED=885;
-    static final double DEFAULT_ACCELERATION=100;
-    static final EnumContainer.Color DEFAULT_color= EnumContainer.Color.BLACK;
+    private  static final double  DEFAULT_MAX_SPEED=885;
+    private  static final double DEFAULT_ACCELERATION=100;
+    private static final EnumContainer.Color DEFAULT_color= EnumContainer.Color.BLACK;
     private Wheeled wheeled;
 
     /**
@@ -51,4 +52,10 @@ public class Airplane extends Racer implements AerialRacer  {
         return wheeled.describeSpecific();
 
     }
+
+    @Override
+    public String className() {
+        return CLASS_NAME;
+    }
+
 }

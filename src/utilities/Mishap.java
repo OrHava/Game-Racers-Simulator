@@ -1,7 +1,8 @@
 package utilities;
 
 import java.text.DecimalFormat;
-
+/** @author Or Hava 208418483
+ */
 public class Mishap {
     private boolean fixable;
     private int turnsToFix;

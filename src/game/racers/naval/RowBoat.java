@@ -1,19 +1,18 @@
 package game.racers.naval;
 
 import game.racers.Racer;
-import game.racers.Wheeled;
-import game.racers.land.LandRacer;
+
 import utilities.EnumContainer;
 
-import static java.lang.constant.ConstantDescs.DEFAULT_NAME;
-
+/** @author Or Hava 208418483
+ */
 public class RowBoat extends  Racer implements NavalRacer {
 
     // Fields
-    public static final String CLASS_NAME = "RowBoat";
-    public static final double DEFAULT_MAX_SPEED = 75;
-    public static final double DEFAULT_ACCELERATION = 10;
-    public static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.RED;
+    private static final String CLASS_NAME = "RowBoat";
+    private static final double DEFAULT_MAX_SPEED = 75;
+    private static final double DEFAULT_ACCELERATION = 10;
+    private static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.RED;
 
     private EnumContainer.BoatType type= EnumContainer.BoatType.SKULLING ;
     private EnumContainer.Team team= EnumContainer.Team.DOUBLE ;
@@ -32,6 +31,11 @@ public class RowBoat extends  Racer implements NavalRacer {
     public RowBoat(String name, double maxSpeed, double acceleration,  EnumContainer.Color color) {
         super( name, maxSpeed, acceleration, color);
 
+    }
+
+    @Override
+    public String className() {
+        return CLASS_NAME;
     }
 
 

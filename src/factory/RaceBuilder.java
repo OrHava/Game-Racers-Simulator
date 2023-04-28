@@ -8,6 +8,8 @@ import game.racers.Racer;
 import utilities.EnumContainer.Color;
 
 
+/** @author Or Hava 208418483
+   */
 public class RaceBuilder
 {
     private static RaceBuilder instance;

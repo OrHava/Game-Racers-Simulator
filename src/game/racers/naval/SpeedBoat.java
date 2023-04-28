@@ -2,17 +2,16 @@ package game.racers.naval;
 
 import game.racers.Racer;
 import utilities.EnumContainer;
-
-import static java.lang.constant.ConstantDescs.DEFAULT_NAME;
+/** @author Or Hava 208418483
+ */
 
 public class SpeedBoat extends Racer implements NavalRacer{
 
     // Fields
-    public static final String CLASS_NAME = "SpeedBoat"
-            ;
-    public static final double DEFAULT_MAX_SPEED = 170;
-    public static final double DEFAULT_ACCELERATION = 5;
-    public static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.RED;
+    private static final String CLASS_NAME = "SpeedBoat";
+    private static final double DEFAULT_MAX_SPEED = 170;
+    private static final double DEFAULT_ACCELERATION = 5;
+    private static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.RED;
 
     private EnumContainer.BoatType type= EnumContainer.BoatType.SKULLING ;
     private EnumContainer.Team team= EnumContainer.Team.DOUBLE ;
@@ -34,6 +33,11 @@ public class SpeedBoat extends Racer implements NavalRacer{
 
     }
 
+
+    @Override
+    public String className() {
+        return CLASS_NAME;
+    }
 
     public EnumContainer.BoatType getType() {
         return type;

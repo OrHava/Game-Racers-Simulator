@@ -1,7 +1,8 @@
 package game.racers;
 
 import game.racers.land.LandRacer;
-
+/** @author Or Hava 208418483
+ */
 public class Wheeled implements LandRacer {
  private int numOfWheels;
 

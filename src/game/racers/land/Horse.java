@@ -3,13 +3,14 @@ package game.racers.land;
 import game.racers.Racer;
 import utilities.EnumContainer;
 
-
+/** @author Or Hava 208418483
+ */
 public class Horse extends Racer implements LandRacer{
     // Fields
-    public static final String CLASS_NAME = "Horse";
-    public static final double DEFAULT_MAX_SPEED = 50;
-    public static final double DEFAULT_ACCELERATION = 3;
-    public static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.BLACK;
+    private static final String CLASS_NAME = "Horse";
+    private static final double DEFAULT_MAX_SPEED = 50;
+    private static final double DEFAULT_ACCELERATION = 3;
+    private static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.BLACK;
 
 
     private EnumContainer.Breed breed= EnumContainer.Breed.THOROUGHBRED ;
@@ -29,6 +30,11 @@ public class Horse extends Racer implements LandRacer{
         super( name, maxSpeed, acceleration, color);
 
 
+    }
+
+    @Override
+    public String className() {
+        return CLASS_NAME;
     }
 
 

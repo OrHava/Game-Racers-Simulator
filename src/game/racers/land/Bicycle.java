@@ -4,14 +4,15 @@ import game.racers.Racer;
 import game.racers.Wheeled;
 import utilities.EnumContainer;
 
-
+/** @author Or Hava 208418483
+ */
 public class Bicycle extends  Racer implements LandRacer {
     // Fields
-    public static final String CLASS_NAME = "Bicycle";
-    public static final int DEFAULT_WHEELS = 2;
-    public static final double DEFAULT_MAX_SPEED = 270;
-    public static final double DEFAULT_ACCELERATION = 10;
-    public static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.GREEN;
+    private static final String CLASS_NAME = "Bicycle";
+    private static final int DEFAULT_WHEELS = 2;
+    private static final double DEFAULT_MAX_SPEED = 270;
+    private static final double DEFAULT_ACCELERATION = 10;
+    private static final  EnumContainer.Color DEFAULT_COLOR =  EnumContainer.Color.GREEN;
 
     private Wheeled wheeled;
     private EnumContainer.BicycleType type= EnumContainer.BicycleType.MOUNTAIN ;
@@ -56,4 +57,10 @@ public class Bicycle extends  Racer implements LandRacer {
         return wheeled.describeSpecific()+", Bicycle Type: "+type.toString();
 
     }
+
+    @Override
+    public String className() {
+        return CLASS_NAME;
+    }
+
 }

@@ -2,7 +2,8 @@ package game.arenas.air;
 
 import game.arenas.Arena;
 import utilities.EnumContainer;
-
+/** @author Or Hava 208418483
+ */
 public class AerialArena extends Arena  {
    private final static double DEFAULT_FRICTION =0.4;
    private  final static int DEFAULT_MAX_RACERS =6;
