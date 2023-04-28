@@ -120,7 +120,7 @@ public class Race extends JFrame {
                                 arena = builder.buildArena("game.arenas.naval.NavalArena", arenaLength, maxRacers);
                     }
                 } catch (Exception ex) {
-                    System.out.println(ex);
+                    System.out.println("Error Choosing Arena");
                 }
 
 
@@ -175,9 +175,10 @@ public class Race extends JFrame {
                     col = switch (color) {
                         case "Red" -> EnumContainer.Color.RED;
                         case "Black" -> EnumContainer.Color.BLACK;
-                        case "Green" -> EnumContainer.Color.GREEN;
-                        case "Blue" -> EnumContainer.Color.BLUE;
                         case "Yellow" -> EnumContainer.Color.YELLOW;
+                        case "Blue" -> EnumContainer.Color.BLUE;
+                        case "Green" -> EnumContainer.Color.GREEN;
+
                         default -> null;
                     };
                 }
@@ -186,12 +187,13 @@ public class Race extends JFrame {
                 if (racerType != null) {
                     racerClass = switch (racerType) {
                         case "Helicopter" -> "game.racers.air.Helicopter";
+                        case "Bicycle" -> "game.racers.land.Bicycle";
+                        case "RowBoat" -> "game.racers.naval.RowBoat";
                         case "Airplane" -> "game.racers.air.Airplane";
                         case "Car" -> "game.racers.land.Car";
                         case "Horse" -> "game.racers.land.Horse";
-                        case "Bicycle" -> "game.racers.land.Bicycle";
                         case "SpeedBoat" -> "game.racers.naval.SpeedBoat";
-                        case "RowBoat" -> "game.racers.naval.RowBoat";
+
                         default -> null;
                     };
                 }
@@ -218,7 +220,7 @@ public class Race extends JFrame {
                     JOptionPane.showMessageDialog(race, "racer don't belong to this arena, Choose another racer.");
                     return;
                 } catch (Exception ex) {
-                    System.out.println(ex);
+                    System.out.println("Error Choosing Racer");
                 }
 
 
@@ -416,7 +418,7 @@ public class Race extends JFrame {
 
 
     /**
-     * @param ArenaType
+     * @param ArenaType which arena to put in the panel arena
      */
     private static void loadImageArena(String ArenaType) {
         ImageIcon icon = new ImageIcon("src/GUI/Race/Pictures/"+ArenaType+".jpg");
@@ -443,8 +445,8 @@ public class Race extends JFrame {
 
 
     /**
-     * @param Typeandcolor 
-     * @param panelIndex
+     * @param Typeandcolor the type and color of racer
+     * @param panelIndex the index of the panel racer
      */
     private static void loadImageRacer(String Typeandcolor, int panelIndex) {
         JPanel[] PANEL_RACERS = {

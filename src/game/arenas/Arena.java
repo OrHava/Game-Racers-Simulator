@@ -175,27 +175,27 @@ public abstract class Arena implements Observer {
             int i = 1;
 
             System.out.println("Completed:");
-            for (Racer r : this.compleatedRacers) {
-                String s = String.format("#%d -> %s", i++, r.describeRacer());
+            for (Racer racer : this.compleatedRacers) {
+                String s = String.format("#%d -> %s", i++, racer.describeRacer());
                 System.out.println(s);
             }
 
             System.out.println("Disabled:");
-            for (Racer r : this.disabledRacers) {
-                String s = String.format("#%d -> %s", i++, r.describeRacer());
+            for (Racer racer : this.disabledRacers) {
+                String s = String.format("#%d -> %s", i++, racer.describeRacer());
                 System.out.println(s);
             }
 
 
             System.out.println("Broken:");
-            for (Racer r : this.brokenRacers) {
-                String s = String.format("#%d -> %s", i++, r.describeRacer());
+            for (Racer racer : this.brokenRacers) {
+                String s = String.format("#%d -> %s", i++, racer.describeRacer());
                 System.out.println(s);
             }
 
             System.out.println("Active:");
-            for (Racer r : this.activeRacers) {
-                String s = String.format("#%d -> %s", i++, r.describeRacer());
+            for (Racer racer : this.activeRacers) {
+                String s = String.format("#%d -> %s", i++, racer.describeRacer());
                 System.out.println(s);
             }
         }
@@ -204,17 +204,17 @@ public abstract class Arena implements Observer {
 
     public void startRace() throws InterruptedException {
         initRace();
-        ExecutorService e;
+        ExecutorService executorService;
         synchronized (activeRacers) {
-            e = Executors.newFixedThreadPool(this.activeRacers.size());
+            executorService = Executors.newFixedThreadPool(this.activeRacers.size());
             synchronized (this) {
                 for (Racer racer : activeRacers) {
-                    e.execute(racer);
+                    executorService.execute(racer);
                 }
             }
         }
-        e.shutdown();
-        e.awaitTermination(10, TimeUnit.MINUTES);
+        executorService.shutdown();
+        executorService.awaitTermination(10, TimeUnit.MINUTES);
     }
     @Override
     public void update(Observable o, Object arg) {
