@@ -383,7 +383,9 @@ public class Race extends JFrame implements PropertyChangeListener {
 
                         DefaultTableModel tableModel = new DefaultTableModel(data, new String[]{"Racer name", "Current speed", "Max speed", "Current X location", "Status", "Position"});
                         JTable table = new JTable(tableModel);
+
                         JScrollPane scrollPane = new JScrollPane(table);
+                        scrollPane.setPreferredSize(new Dimension(300, 200)); // Set the desired size for the scroll pane
 
                         JPanel panel = new JPanel();
                         panel.add(scrollPane);
