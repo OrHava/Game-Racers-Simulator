@@ -1,22 +1,21 @@
 # Game-Racers-Simulator
-Race Manager - README
-This Java code represents a race manager application that allows users to build and manage races with different racers in an arena. The application provides a graphical user interface (GUI) for the users to interact with. Below is an overview of the code structure and functionality.
+- This Java code represents a race manager application that allows users to build and manage races with different racers in an arena. The application provides a graphical user interface -(GUI) for the users to interact with. Below is an overview of the code structure and functionality.
 
 # Code Overview
-The code consists of several event listeners and helper methods to handle user interactions and manage the race. Here are the key components and their functionalities:
+- The code consists of several event listeners and helper methods to handle user interactions and manage the race. Here are the key components and their functionalities:
 
 ### 1. Race() Constructor
 This constructor initializes the race manager and sets up event listeners for various buttons in the GUI.
 It handles actions related to building the arena, adding racers, and starting the race.
 ### 2. buildArenaButton Mouse Listener
 When the "Build Arena" button is pressed, it triggers the event listener.
-It checks if the race has already finished and resets the race if necessary.
-It retrieves input values for the arena length and maximum number of racers from the corresponding text fields.
-It validates the input values and shows error messages if they are invalid.
-It determines the chosen arena type from the combo box selection.
-It loads the corresponding arena image based on the chosen arena type.
-It uses the race builder to build the arena object based on the chosen arena type, length, and maximum racers.
-It fires a property change event to notify the listeners that the arena has been built.
+- It checks if the race has already finished and resets the race if necessary.
+- It retrieves input values for the arena length and maximum number of racers from the corresponding text fields.
+- It validates the input values and shows error messages if they are invalid.
+- It determines the chosen arena type from the combo box selection.
+- It loads the corresponding arena image based on the chosen arena type.
+- It uses the race builder to build the arena object based on the chosen arena type, length, and maximum racers.
+- It fires a property change event to notify the listeners that the arena has been built.
 ### 3. addRacerButton Mouse Listener
 When the "Add Racer" button is pressed, it triggers the event listener.
 It performs various checks and validations before adding a racer to the race.
