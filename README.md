@@ -85,6 +85,13 @@ The racers' panels will move across the arena on the GUI.
 The race will finish when all racers have completed the race or are disabled.
 Note: Error messages will be displayed if any invalid inputs or incorrect actions are performed.
 
+### Getting Started
+To use this code, follow these steps:
+
+Set up a Java development environment (JDK) on your machine.
+Create a new Java project in your preferred Integrated Development Environment (IDE).
+Create the necessary GUI components and add the provided code to the corresponding.
+
 # Contributing
 This code is provided as a reference implementation for a race manager application. Feel free to modify and enhance it according to your specific needs.
 
