@@ -41,7 +41,7 @@ public class EnumContainer {
 	}
 
 	public static enum RacerEvent {
-		FINISHED, BROKENDOWN, REPAIRED, DISABLED
+		FINISHED, BROKENDOWN, REPAIRED, DISABLED,
 	}
 	public static enum Engine  {
 		FOURSTROKE, VTYPE, STRAIGHT, BOXER, ROTARY

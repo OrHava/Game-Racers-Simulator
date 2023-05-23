@@ -4,16 +4,25 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import game.arenas.Arena;
+import game.arenas.air.AerialArena;
+import game.arenas.land.LandArena;
+import game.arenas.naval.NavalArena;
 import game.racers.Racer;
 import utilities.EnumContainer.Color;
 
-
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 /** @author Or Hava 208418483
    */
 public class RaceBuilder
 {
     private static RaceBuilder instance;
 
+    private PropertyChangeSupport propertyChangeSupport;
+
+    private RaceBuilder() {
+        propertyChangeSupport = new PropertyChangeSupport(this);  // Initialize the property change support object
+    }
 
     /**
      * @return instance
@@ -22,9 +31,13 @@ public class RaceBuilder
     {
         if(instance==null)
             instance=new RaceBuilder();
+
         return instance;
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
 
     /**
      * Creates a new instance of a class specified by the string {@code arenaType},
@@ -108,4 +121,74 @@ public class RaceBuilder
         constructor=Class.getConstructor(String.class,double.class,double.class,Color.class,int.class);
         return (Racer) constructor.newInstance(name,maxSpeed,acceleration,color,wheels);
     }
+
+    /**
+     * Creates a copy of the given racer.
+     *
+     * @param racer The racer object to copy.
+     * @return A copy of the given racer.
+     * @throws ClassNotFoundException    If the specified racer type cannot be found.
+     * @throws NoSuchMethodException     If the specified constructor cannot be found.
+     * @throws SecurityException         If there is a security violation while accessing the constructor.
+     * @throws InstantiationException    If there is an error while instantiating the racer object.
+     * @throws IllegalAccessException    If there is an error accessing the racer object.
+     * @throws IllegalArgumentException  If the specified arguments are invalid.
+     * @throws InvocationTargetException If there is an error while invoking the constructor.
+     */
+    public Racer copyRacer(Racer racer) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
+            InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        String racerType = racer.getClass().getName();
+        String name = racer.getName();
+        double maxSpeed = racer.getMaxSpeed();
+        double acceleration = racer.getAcceleration();
+        Color color = racer.getColor();
+
+
+       return buildRacer(racerType, name, maxSpeed, acceleration, color);
+
+    }
+
+    /**
+     * @param racer
+     * @return
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
+    public Racer copyWheeledRacer(Racer racer) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
+            InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        String racerType = racer.getClass().getName();
+        String name = racer.getName();
+        double maxSpeed = racer.getMaxSpeed();
+        double acceleration = racer.getAcceleration();
+        Color color = racer.getColor();
+
+
+        return buildWheeledRacer(racerType, name, maxSpeed, acceleration, color,2);
+
+    }
+
+    /**
+     * @param racerType
+     * @return
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
+    public Racer buildDefaultRacer(String racerType) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
+            InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        Class<?> racerClass = classLoader.loadClass(racerType);
+        Constructor<?> constructor = racerClass.getConstructor();
+        return (Racer) constructor.newInstance();
+    }
+
 }

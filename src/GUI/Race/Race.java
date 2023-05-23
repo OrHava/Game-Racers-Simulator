@@ -2,21 +2,29 @@ package GUI.Race;
 
 import factory.RaceBuilder;
 import game.arenas.Arena;
+import game.arenas.exceptions.RacerLimitException;
 import game.arenas.exceptions.RacerTypeException;
 import game.racers.Racer;
 import utilities.EnumContainer;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
+
 /** @author Or Hava 208418483
  */
-public class Race extends JFrame {
+public class Race extends JFrame implements PropertyChangeListener {
     private JComboBox comboBoxArena;
     private JPanel Panel1;
     private JTextField textFieldArenaLeangth;
@@ -63,13 +71,18 @@ public class Race extends JFrame {
     private JPanel PanelRacer18;
     private JPanel PanelRacer19;
     private JPanel PanelRacer20;
+    private JComboBox <RacerInfo> comboBoxRacers;
+    private JButton CopyRacerBtn;
+    private JButton CarRaceBuilderBtn;
+    private JTextField nRacersText;
+
     private static Race race ;
-    private static final RaceBuilder builder = RaceBuilder.getInstance();
-    private static final ArrayList<Racer> racers = new ArrayList<>();
+    private static  RaceBuilder builder = RaceBuilder.getInstance();
+    private static  ArrayList<Racer> racers = new ArrayList<>();
     private int arenaLength = 1000;
 
-    private final ArrayList<String> racersImages = new ArrayList<>();
-    private static final ArrayList<JPanel> racersJPanel = new ArrayList<>();
+    private ArrayList<String> racersImages = new ArrayList<>();
+    private static  ArrayList<JPanel> racersJPanel = new ArrayList<>();
     private int maxRacers = 8;
     private int racersNumber = 0;
     private Arena arena = null;
@@ -86,8 +99,15 @@ public class Race extends JFrame {
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
 
-                for(Component c : race.PanelArena.getComponents()) {
-                    if((c instanceof JPanel)) {
+
+                if (raceFinished) {
+
+                    resetRace();
+                }
+
+
+                for (Component c : race.PanelArena.getComponents()) {
+                    if ((c instanceof JPanel)) {
                         race.PanelArena.setVisible(true);
                     }
                 }
@@ -119,12 +139,10 @@ public class Race extends JFrame {
                         case "NavalArena" ->
                                 arena = builder.buildArena("game.arenas.naval.NavalArena", arenaLength, maxRacers);
                     }
+                    firePropertyChange("arenaBuilt", null, arena);
                 } catch (Exception ex) {
                     System.out.println("Error Choosing Arena");
                 }
-
-
-
 
 
             }
@@ -201,11 +219,10 @@ public class Race extends JFrame {
                 try {
                     if (racerType != null) {
                         Racer racer;
-                        if(racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")){
+                        if (racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")) {
                             racer = builder.buildWheeledRacer(racerClass, name, maxSpeed, acceleration, col, 2);
-
-                        }
-                        else{
+                            firePropertyChange("racerAdded", null, racer);
+                        } else {
                             racer = builder.buildRacer(racerClass, name, maxSpeed, acceleration, col);
 
                         }
@@ -213,6 +230,10 @@ public class Race extends JFrame {
                         arena.addRacer(racer);
                         arena.initRace();
                         racers.add(racer);
+
+                        comboBoxRacers.addItem(new RacerInfo(racer.getName(), racer.getSerialNumber(), racer));
+
+
                     }
 
 
@@ -224,11 +245,8 @@ public class Race extends JFrame {
                 }
 
 
-
                 racersImages.add(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + Objects.requireNonNull(comboBoxRacerColor.getSelectedItem()).toString());
-                loadImageRacer(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + comboBoxRacerColor.getSelectedItem().toString(),racersNumber+1);
-
-
+                loadImageRacer(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + comboBoxRacerColor.getSelectedItem().toString(), racersNumber + 1);
 
 
                 racersNumber++;
@@ -250,9 +268,7 @@ public class Race extends JFrame {
                 }
                 if (raceStarted) {
                     JOptionPane.showMessageDialog(race, "Race already started!");
-                }
-                else{
-
+                } else {
 
 
                     int arenaWidth = (int) arena.getLength();
@@ -265,9 +281,9 @@ public class Race extends JFrame {
                     setLocationRelativeTo(null);
                     setVisible(true);
                     raceStarted = true;
-
+                    firePropertyChange("raceStarted", null, null);
                     Thread raceThread = new Thread(() -> {
-                        int panelArenaLength = race.PanelArena.getWidth()-race.PanelRacer1.getWidth();
+                        int panelArenaLength = race.PanelArena.getWidth() - race.PanelRacer1.getWidth();
                         int arenaLength = (int) arena.getLength();
                         double ratio = (double) panelArenaLength / (double) arenaLength;
                         Timer timer = new Timer(30, new ActionListener() {
@@ -275,14 +291,20 @@ public class Race extends JFrame {
 
                             @Override
                             public void actionPerformed(ActionEvent e1) {
-                                i=0;
+                                i = 0;
                                 for (int i = 0; i < racersJPanel.size(); i++) {
+
+
                                     JPanel jPanel = racersJPanel.get(i);
                                     jPanel.setLocation((int) (racers.get(i).getCurrentLocation().getX() * ratio), jPanel.getY());
                                     jPanel.repaint();
-                                    System.out.println("ratio: " + (int) ratio);
-                                    System.out.println("getCurrentLocation: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio));
-                                    System.out.println("racer place: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio) + " index: "+ i);
+//                                    System.out.println("getCurrentLocation: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio));
+//                                    System.out.println("racer place: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio) + " index: " + i);
+                                    System.out.println("arena.getCompleatedRacers() " + arena.getCompleatedRacers().size());
+                                    System.out.println(" arena.getActiveRacers() " + arena.getActiveRacers().size());
+                                    System.out.println(" arena.getDisabledRacers() " + arena.getDisabledRacers().size());
+                                    System.out.println(" arena.getBrokenRacers() " + arena.getBrokenRacers().size());
+
                                 }
 
                                 if (arena.getCompleatedRacers().size() + arena.getDisabledRacers().size() == racers.size()) {
@@ -295,6 +317,7 @@ public class Race extends JFrame {
                                     }
 
                                     raceFinished = true;
+                                    firePropertyChange("raceFinished", null, null);
                                 }
                             }
                         });
@@ -310,13 +333,12 @@ public class Race extends JFrame {
                     raceThread.start();
 
 
-
-
-
                 }
 
             }
         });
+
+
         showInfoButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -325,67 +347,413 @@ public class Race extends JFrame {
                     JOptionPane.showMessageDialog(race, "Please build arena first and add racers!");
                     return;
                 }
-                String[] DataNames = { "Racer name", "Current speed", "Max speed", "Current X location", "Finished" };
-                String[][] Data = new String[racersNumber][5];
-                int i = 0;
-                for (Racer racer : arena.getCompleatedRacers()) {
-                    Data[i][0] = racer.getName();
-                    Data[i][1] = "" + racer.getCurrentSpeed();
-                    Data[i][2] = "" + racer.getMaxSpeed();
-                    Data[i][3] = "" + racer.getCurrentLocation().getX();
-                    Data[i][4] = "Yes";
-                    i++;
+                final boolean[] lastUpdate = {false};
+                // Create a new thread to update the information in real time
+                Thread infoThread = new Thread(() -> {
+                    while (true) {
+                        ArrayList<Racer> completedRacers = arena.getCompleatedRacers();
+                        ArrayList<Racer> activeRacers = arena.getActiveRacers();
+                        ArrayList<Racer> brokenRacers = arena.getBrokenRacers();
+                        ArrayList<Racer> disabledRacers = arena.getDisabledRacers();
+                        ArrayList<Racer> ranking = getRanking();
+
+                        int dataSize = completedRacers.size() + activeRacers.size() + brokenRacers.size() + disabledRacers.size() + ranking.size();
+                        String[][] data = new String[dataSize][6];
+
+                        int index = 0;
+                        for (Racer racer : ranking) {
+                            data[index][0] = racer.getName();
+                            data[index][1] = String.valueOf(racer.getCurrentSpeed());
+                            data[index][2] = String.valueOf(racer.getMaxSpeed());
+                            data[index][3] = String.valueOf(racer.getCurrentLocation().getX());
+
+                            if (completedRacers.contains(racer)) {
+                                data[index][4] = "Comp";
+                            } else if (activeRacers.contains(racer)) {
+                                data[index][4] = "Act";
+                            } else if (brokenRacers.contains(racer)) {
+                                data[index][4] = "Brok";
+                            } else if (disabledRacers.contains(racer)) {
+                                data[index][4] = "Failed";
+                            }
+
+                            data[index][5] = String.valueOf(ranking.indexOf(racer) + 1);
+                            index++;
+                        }
+
+                        DefaultTableModel tableModel = new DefaultTableModel(data, new String[]{"Racer name", "Current speed", "Max speed", "Current X location", "Status", "Position"});
+                        JTable table = new JTable(tableModel);
+                        JScrollPane scrollPane = new JScrollPane(table);
+
+                        JPanel panel = new JPanel();
+                        panel.add(scrollPane);
+
+                        SwingUtilities.invokeLater(() -> {
+                            if (infoTable != null) {
+                                infoTable.dispose();
+                            }
+                            infoTable = new JFrame("Race Information");
+                            infoTable.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                            infoTable.setContentPane(panel);
+                            infoTable.pack();
+                            infoTable.setVisible(true);
+                        });
+
+                        if (raceFinished && !lastUpdate[0]) {
+                            lastUpdate[0] = true;
+                        }
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        if (raceFinished && lastUpdate[0]) {
+                            break;
+                        }
+                    }
+                });
+
+                infoThread.setDaemon(true);
+                infoThread.start();
+            }
+        });
+
+        comboBoxRacers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox<RacerInfo> source = (JComboBox<RacerInfo>) e.getSource();
+                RacerInfo selectedRacer = (RacerInfo) source.getSelectedItem();
+
+
+                String racerName = null;
+                if (selectedRacer != null) {
+                    racerName = selectedRacer.getName();
                 }
 
-                for (Racer racer : arena.getActiveRacers()) {
-                    Data[i][0] = racer.getName();
-                    Data[i][1] = "" + racer.getCurrentSpeed();
-                    Data[i][2] = "" + racer.getMaxSpeed();
-                    Data[i][3] = "" + racer.getCurrentLocation().getX();
-                    Data[i][4] = "No";
-                    i++;
-                }
-                for (Racer racer : arena.getBrokenRacers()) {
-                    Data[i][0] = racer.getName();
-                    Data[i][1] = "" + racer.getCurrentSpeed();
-                    Data[i][2] = "" + racer.getMaxSpeed();
-                    Data[i][3] = "" + racer.getCurrentLocation().getX();
-                    Data[i][4] = "No";
-                    i++;
-                }
-                for (Racer racer : arena.getDisabledRacers()) {
-                    Data[i][0] = racer.getName();
-                    Data[i][1] = "" + racer.getCurrentSpeed();
-                    Data[i][2] = "" + racer.getMaxSpeed();
-                    Data[i][3] = "" + racer.getCurrentLocation().getX();
-                    Data[i][4] = "No";
-                    i++;
+                int racerNumber = 0;
+                if (selectedRacer != null) {
+                    racerNumber = selectedRacer.getNumber();
                 }
 
-                JTable table = new JTable(Data, DataNames);
-                table.setPreferredScrollableViewportSize(table.getPreferredSize());
-                JScrollPane scrollPane = new JScrollPane(table);
 
-                JPanel tabPan = new JPanel();
-                // tabPan.setLayout(new GridLayout(1,0));
-                tabPan.add(scrollPane);
+                System.out.println("Selected Racer: " + racerName + " (Number: " + racerNumber + ")");
 
-                if (infoTable != null)
-                    infoTable.dispose();
-                infoTable = new JFrame("Racers information");
-                infoTable.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                infoTable.setContentPane(tabPan);
-                infoTable.pack();
-                infoTable.setVisible(true);
+
+
+                if(selectedRacer.getRacer().describeRacer().contains("Airplane")){
+                    comboBoxRacer.setSelectedIndex(0);
+                }
+                else if(selectedRacer.getRacer().describeRacer().contains("Helicopter")){
+                    comboBoxRacer.setSelectedIndex(1);
+                }
+                else if(selectedRacer.getRacer().describeRacer().contains("Bicycle")){
+                    comboBoxRacer.setSelectedIndex(2);
+                }
+                else if(selectedRacer.getRacer().describeRacer().contains("Car")){
+                    comboBoxRacer.setSelectedIndex(3);
+                }
+                else if(selectedRacer.getRacer().describeRacer().contains("Horse")){
+                    comboBoxRacer.setSelectedIndex(4);
+                }
+                else if(selectedRacer.getRacer().describeRacer().contains("RowBoat")){
+                    comboBoxRacer.setSelectedIndex(5);
+                }
+                else if(selectedRacer.getRacer().describeRacer().contains("SpeedBoat")){
+                    comboBoxRacer.setSelectedIndex(6);
+                }
+
+
+
+                if(selectedRacer.getRacer().getColor() == EnumContainer.Color.RED){
+                    comboBoxRacerColor.setSelectedIndex(0);
+                }
+                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.GREEN){
+                    comboBoxRacerColor.setSelectedIndex(1);
+                }
+                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.BLUE){
+                    comboBoxRacerColor.setSelectedIndex(2);
+                }
+                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.BLACK){
+                    comboBoxRacerColor.setSelectedIndex(3);
+                }
+                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.YELLOW){
+                    comboBoxRacerColor.setSelectedIndex(4);
+                }
+                textFieldName.setText(selectedRacer.getRacer().getName());
+                textFieldMaxSpeed.setText(String.valueOf((int)selectedRacer.getRacer().getMaxSpeed()));
+                textFieldAcceleration.setText(String.valueOf((int)selectedRacer.getRacer().getAcceleration()));
+
+
+            }
+        });
+        CopyRacerBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                JComboBox<RacerInfo> comboBox = comboBoxRacers;
+                RacerInfo selectedRacer = (RacerInfo) comboBox.getSelectedItem();
+
+                if(comboBoxRacers.getSelectedItem()==null){
+                    JOptionPane.showMessageDialog(race, "Choose Which Racer to Copy.");
+                }
+                else{
+
+                    System.out.println(Objects.requireNonNull(comboBoxRacers.getSelectedItem()));
+
+
+                    if (raceFinished) {
+                        JOptionPane.showMessageDialog(race, "Race finished, Please make a new arena.");
+                        return;
+                    }
+                    if (raceStarted) {
+                        JOptionPane.showMessageDialog(race, "Race started, racers cannot be added now.");
+                        return;
+                    }
+                    if (arena == null) {
+                        JOptionPane.showMessageDialog(race, "Please build arena first!");
+                        return;
+                    }
+                    if (racersNumber == maxRacers) {
+                        JOptionPane.showMessageDialog(race, "No more racers can be added!");
+                        return;
+                    }
+                    String name;
+                    double maxSpeed;
+                    double acceleration;
+
+                    try {
+                        name = textFieldName.getText();
+                        maxSpeed = Double.parseDouble(textFieldMaxSpeed.getText());
+                        acceleration = Double.parseDouble(textFieldAcceleration.getText());
+                        if (name.isEmpty() || maxSpeed <= 0 || acceleration <= 0)
+                            throw new Exception();
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(race, "Invalid input values! Please try again.");
+                        return;
+                    }
+
+                    String racerType = (String) comboBoxRacer.getSelectedItem();
+
+                    String color = (String) comboBoxRacerColor.getSelectedItem();
+
+
+
+
+                    try {
+                        if (racerType != null) {
+                            Racer racer = null;
+                            if (racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")) {
+                                if (selectedRacer != null) {
+                                    racer = builder.copyWheeledRacer(selectedRacer.getRacer());
+                                    if (color != null) {
+                                        racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
+                                    }
+                                    firePropertyChange("racerAdded", null, racer);
+                                }
+
+                            } else {
+                                if (selectedRacer != null) {
+                                    racer = builder.copyRacer(selectedRacer.getRacer());
+                                    if (color != null) {
+                                        racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
+                                    }
+                                    firePropertyChange("racerAdded", null, racer);
+                                }
+
+                            }
+
+                            arena.addRacer(racer);
+                            arena.initRace();
+                            racers.add(racer);
+
+
+                            if (racer != null) {
+                                comboBoxRacers.addItem(new RacerInfo(racer.getName(), racer.getSerialNumber(), racer));
+                            }
+
+
+                        }
+
+
+                    } catch (RacerTypeException ex) {
+                        JOptionPane.showMessageDialog(race, "racer don't belong to this arena, Choose another racer.");
+                        return;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        System.out.println("Error Choosing Racer");
+                    }
+
+
+                    racersImages.add(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + Objects.requireNonNull(comboBoxRacerColor.getSelectedItem()).toString());
+                    loadImageRacer(Objects.requireNonNull(comboBoxRacer.getSelectedItem()) + comboBoxRacerColor.getSelectedItem().toString(), racersNumber + 1);
+
+
+                    racersNumber++;
+                }
+
+            }
+        });
+        CarRaceBuilderBtn.addMouseListener(new MouseAdapter() {
+            /**
+             * @param e the event to be processed
+             */
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                int nRacers=0;
+
+                String text = nRacersText.getText();
+                if (!text.matches("\\d+")) {
+                    JOptionPane.showMessageDialog(race, "Invalid input values! Please try again.");
+                } else {
+
+                    try {
+                        nRacers = Integer.parseInt(text);
+                        if(nRacers<=0 || nRacers >20){
+                            JOptionPane.showMessageDialog(race, "Invalid input values! Please try again.");
+                            return;
+                        }
+
+                        if (raceFinished) {
+
+
+                            resetRace();
+                        }
+
+
+                        for (Component c : race.PanelArena.getComponents()) {
+                            if ((c instanceof JPanel)) {
+                                race.PanelArena.setVisible(true);
+                            }
+                        }
+                        if (raceStarted && !raceFinished) {
+                            JOptionPane.showMessageDialog(race, "Race started! Please wait.");
+                            return;
+                        }
+
+                        try {
+                            arenaLength = Integer.parseInt(textFieldArenaLeangth.getText());
+                            maxRacers = Integer.parseInt(textFieldMaxRacers.getText());
+                            if (arenaLength < 100 || arenaLength > 3000 || maxRacers <= 0 || maxRacers > 20)
+                                throw new Exception();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(race, "Invalid input values! Please try again.");
+                            return;
+                        }
+
+                        try {
+                            loadImageArena("LandArena");
+                            arena = builder.buildArena("game.arenas.land.LandArena", 1000, nRacers);
+
+
+                            firePropertyChange("arenaBuilt", null, arena);
+                        } catch (Exception ex) {
+                            System.out.println("Error Choosing Arena");
+                        }
+
+
+
+
+
+
+                        RaceBuilder raceBuilder = RaceBuilder.getInstance();
+
+                        Racer defaultRacerCar = raceBuilder.buildDefaultRacer("game.racers.land.Car");
+                        System.out.println(defaultRacerCar.describeRacer());
+                        for (int i = 0; i < nRacers; i++) {
+                            Racer copyRacer = raceBuilder.copyWheeledRacer(defaultRacerCar);
+                            arena.addRacer(copyRacer);
+                            arena.initRace();
+                            racers.add(copyRacer);
+
+                            racersImages.add("CarRed" );
+                            loadImageRacer("CarRed" , racersNumber + 1);
+                            racersNumber++;
+
+                        }
+
+
+                    } catch (NumberFormatException | ClassNotFoundException | NoSuchMethodException |
+                             InstantiationException | IllegalAccessException | InvocationTargetException |
+                             RacerLimitException | RacerTypeException ee) {
+
+
+                        ee.printStackTrace();
+
+                    }
+
+                }
+
+
+
+
             }
         });
     }
+
+
+    /**
+     * @return all racers
+     */
+        public ArrayList<Racer> getRanking() {
+        ArrayList<Racer> allRacers = new ArrayList<>();
+        allRacers.addAll(arena.getCompleatedRacers());
+        allRacers.addAll(arena.getActiveRacers());
+        allRacers.addAll(arena.getBrokenRacers());
+        allRacers.addAll(arena.getDisabledRacers());
+
+        allRacers.sort(Comparator.comparingDouble(racer -> racer.getCurrentLocation().getX()));
+        Collections.reverse(allRacers);
+
+        for (int i = 0; i < allRacers.size(); i++) {
+            Racer racer = allRacers.get(i);
+            racer.setPosition(i + 1);
+        }
+
+        return allRacers;
+    }
+
+
+    static class RacerInfo {
+        private final String name;
+        private final int number;
+        private Racer racer;
+
+        public RacerInfo(String name, int number, Racer racer) {
+            this.name = name;
+            this.number = number;
+            this.racer=racer;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+        @Override
+        public String toString() {
+            return "Name: " + name + ", ID: " + number;
+        }
+
+        public Racer getRacer() {
+            return racer;
+        }
+
+        public void setRacer(Racer racer) {
+            this.racer = racer;
+        }
+    }
+
 
     public static  void  main(String[] args){
 
        race = new Race();
 
-        ImageIcon icon = new ImageIcon("src\\GUI\\Race\\Pictures\\AerialArena.jpg"); // replace with the path to your image file
+        ImageIcon icon = new ImageIcon("src/GUI/Race/Pictures/CarRed.png"); // replace with the path to your image file
 
         race.setContentPane(race.Panel1);
         race.setTitle("Hello Racers");
@@ -409,12 +777,96 @@ public class Race extends JFrame {
 
 
         race.setIconImage(icon.getImage());
-
-
+        race.init();
 
 
 
     }
+
+    private void init() {
+        builder.addPropertyChangeListener(this);
+    }
+
+
+    /**
+     * @param evt A PropertyChangeEvent object describing the event source
+     *            and the property that has changed.
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String propertyName = evt.getPropertyName();
+        switch (propertyName) {
+            case "arenaBuilt" -> arena = (Arena) evt.getNewValue();
+            case "racerAdded" -> {
+                Racer racer = (Racer) evt.getNewValue();
+                racers.add(racer);
+            }
+            case "raceStarted" -> {
+                raceStarted = true;
+                // Start the race thread here...
+                startRaceThread();
+            }
+            case "raceFinished" -> {
+                raceFinished = true;
+                // Stop or interrupt the race thread here...
+                stopRaceThread();
+            }
+        }
+    }
+
+
+    private Thread raceThread;
+
+    private void startRaceThread() {
+        raceThread = new Thread(() -> {
+
+            while (!raceFinished) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+
+                    break;
+                }
+            }
+
+
+        });
+
+        raceThread.start();  // Start the race thread
+    }
+
+    private void stopRaceThread() {
+        if (raceThread != null && raceThread.isAlive()) {
+            raceThread.interrupt();  // Interrupt the race thread
+            raceThread = null;  // Reset the race thread variable
+        }
+    }
+
+
+    private void resetRace() {
+        raceStarted = false;
+        infoTable = null;
+        arena = null;
+        racersNumber = 0;
+        racersImages = new ArrayList<>();
+        racersJPanel = new ArrayList<>();
+        racers = new ArrayList<>();
+        builder = RaceBuilder.getInstance();
+        comboBoxRacers.removeAllItems();
+        for (Component c : race.PanelArena.getComponents()) {
+            if (c instanceof JPanel) {
+                c.setLocation(0, c.getY());
+                ((JPanel) c).removeAll();
+                ((JPanel) c).setOpaque(false);
+            }
+        }
+        race.PanelArena.setVisible(false);
+        race.PanelArena.revalidate();
+        race.PanelArena.repaint();
+        raceFinished = false;
+    }
+
+
 
 
     /**

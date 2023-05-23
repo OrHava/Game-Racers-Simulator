@@ -18,8 +18,14 @@ public class Fate {
 	 * @return
 	 */
 	public static boolean generateFixable() {
+		// Generate a random number between 0 and 99 (inclusive)
+		int randomNumber = rand.nextInt(100);
 
-		return true;
+		// Define the probability threshold for returning false (e.g., 5% chance)
+		int falseThreshold = 5;
+
+		// Return false if the random number is less than the threshold
+		return randomNumber >= falseThreshold;
 	}
 
 
