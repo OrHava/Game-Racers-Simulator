@@ -100,11 +100,8 @@ public class Race extends JFrame implements PropertyChangeListener {
                 super.mousePressed(e);
 
 
-                if (raceFinished) {
 
-                    resetRace();
-                }
-
+                resetRace();
 
                 for (Component c : race.PanelArena.getComponents()) {
                     if ((c instanceof JPanel)) {
@@ -298,12 +295,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                                     JPanel jPanel = racersJPanel.get(i);
                                     jPanel.setLocation((int) (racers.get(i).getCurrentLocation().getX() * ratio), jPanel.getY());
                                     jPanel.repaint();
-//                                    System.out.println("getCurrentLocation: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio));
-//                                    System.out.println("racer place: " + (int) (racers.get(i).getCurrentLocation().getX() * ratio) + " index: " + i);
-                                    System.out.println("arena.getCompleatedRacers() " + arena.getCompleatedRacers().size());
-                                    System.out.println(" arena.getActiveRacers() " + arena.getActiveRacers().size());
-                                    System.out.println(" arena.getDisabledRacers() " + arena.getDisabledRacers().size());
-                                    System.out.println(" arena.getBrokenRacers() " + arena.getBrokenRacers().size());
+
 
                                 }
 
@@ -385,7 +377,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                         JTable table = new JTable(tableModel);
 
                         JScrollPane scrollPane = new JScrollPane(table);
-                        scrollPane.setPreferredSize(new Dimension(300, 200)); // Set the desired size for the scroll pane
+                        scrollPane.setPreferredSize(new Dimension(300, 500)); // Set the desired size for the scroll pane
 
                         JPanel panel = new JPanel();
                         panel.add(scrollPane);
@@ -442,50 +434,52 @@ public class Race extends JFrame implements PropertyChangeListener {
 
                 System.out.println("Selected Racer: " + racerName + " (Number: " + racerNumber + ")");
 
+             if(selectedRacer!=null){
+                 if(selectedRacer.getRacer().describeRacer().contains("Airplane")){
+                     comboBoxRacer.setSelectedIndex(0);
+                 }
+                 else if(selectedRacer.getRacer().describeRacer().contains("Helicopter")){
+                     comboBoxRacer.setSelectedIndex(1);
+                 }
+                 else if(selectedRacer.getRacer().describeRacer().contains("Bicycle")){
+                     comboBoxRacer.setSelectedIndex(2);
+                 }
+                 else if(selectedRacer.getRacer().describeRacer().contains("Car")){
+                     comboBoxRacer.setSelectedIndex(3);
+                 }
+                 else if(selectedRacer.getRacer().describeRacer().contains("Horse")){
+                     comboBoxRacer.setSelectedIndex(4);
+                 }
+                 else if(selectedRacer.getRacer().describeRacer().contains("RowBoat")){
+                     comboBoxRacer.setSelectedIndex(5);
+                 }
+                 else if(selectedRacer.getRacer().describeRacer().contains("SpeedBoat")){
+                     comboBoxRacer.setSelectedIndex(6);
+                 }
 
 
-                if(selectedRacer.getRacer().describeRacer().contains("Airplane")){
-                    comboBoxRacer.setSelectedIndex(0);
-                }
-                else if(selectedRacer.getRacer().describeRacer().contains("Helicopter")){
-                    comboBoxRacer.setSelectedIndex(1);
-                }
-                else if(selectedRacer.getRacer().describeRacer().contains("Bicycle")){
-                    comboBoxRacer.setSelectedIndex(2);
-                }
-                else if(selectedRacer.getRacer().describeRacer().contains("Car")){
-                    comboBoxRacer.setSelectedIndex(3);
-                }
-                else if(selectedRacer.getRacer().describeRacer().contains("Horse")){
-                    comboBoxRacer.setSelectedIndex(4);
-                }
-                else if(selectedRacer.getRacer().describeRacer().contains("RowBoat")){
-                    comboBoxRacer.setSelectedIndex(5);
-                }
-                else if(selectedRacer.getRacer().describeRacer().contains("SpeedBoat")){
-                    comboBoxRacer.setSelectedIndex(6);
-                }
+
+                 if(selectedRacer.getRacer().getColor() == EnumContainer.Color.RED){
+                     comboBoxRacerColor.setSelectedIndex(0);
+                 }
+                 else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.GREEN){
+                     comboBoxRacerColor.setSelectedIndex(1);
+                 }
+                 else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.BLUE){
+                     comboBoxRacerColor.setSelectedIndex(2);
+                 }
+                 else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.BLACK){
+                     comboBoxRacerColor.setSelectedIndex(3);
+                 }
+                 else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.YELLOW){
+                     comboBoxRacerColor.setSelectedIndex(4);
+                 }
+                 textFieldName.setText(selectedRacer.getRacer().getName());
+                 textFieldMaxSpeed.setText(String.valueOf((int)selectedRacer.getRacer().getMaxSpeed()));
+                 textFieldAcceleration.setText(String.valueOf((int)selectedRacer.getRacer().getAcceleration()));
+             }
 
 
-
-                if(selectedRacer.getRacer().getColor() == EnumContainer.Color.RED){
-                    comboBoxRacerColor.setSelectedIndex(0);
-                }
-                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.GREEN){
-                    comboBoxRacerColor.setSelectedIndex(1);
-                }
-                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.BLUE){
-                    comboBoxRacerColor.setSelectedIndex(2);
-                }
-                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.BLACK){
-                    comboBoxRacerColor.setSelectedIndex(3);
-                }
-                else if(selectedRacer.getRacer().getColor() == EnumContainer.Color.YELLOW){
-                    comboBoxRacerColor.setSelectedIndex(4);
-                }
-                textFieldName.setText(selectedRacer.getRacer().getName());
-                textFieldMaxSpeed.setText(String.valueOf((int)selectedRacer.getRacer().getMaxSpeed()));
-                textFieldAcceleration.setText(String.valueOf((int)selectedRacer.getRacer().getAcceleration()));
 
 
             }
@@ -604,6 +598,7 @@ public class Race extends JFrame implements PropertyChangeListener {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
+                resetRace();
                 int nRacers=0;
 
                 String text = nRacersText.getText();
@@ -875,6 +870,9 @@ public class Race extends JFrame implements PropertyChangeListener {
      * @param ArenaType which arena to put in the panel arena
      */
     private static void loadImageArena(String ArenaType) {
+
+        JFrame frame = new JFrame("Your Frame Title");
+
         ImageIcon icon = new ImageIcon("src/GUI/Race/Pictures/"+ArenaType+".jpg");
         JLabel label = new JLabel();
 
@@ -903,6 +901,7 @@ public class Race extends JFrame implements PropertyChangeListener {
      * @param panelIndex the index of the panel racer
      */
     private static void loadImageRacer(String Typeandcolor, int panelIndex) {
+
         JPanel[] PANEL_RACERS = {
                 race.PanelRacer1, race.PanelRacer2, race.PanelRacer3, race.PanelRacer4,
                 race.PanelRacer5, race.PanelRacer6, race.PanelRacer7, race.PanelRacer8,
