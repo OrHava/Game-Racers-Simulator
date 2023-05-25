@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /** @author Or Hava 208418483
  */
@@ -359,7 +360,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                             data[index][2] = String.valueOf(racer.getMaxSpeed());
                             data[index][3] = String.valueOf(racer.getCurrentLocation().getX());
 
-                            if (completedRacers.contains(racer)) {
+                            if (completedRacers.contains(racer) && !disabledRacers.contains(racer) ) {
                                 data[index][4] = "Comp";
                             } else if (activeRacers.contains(racer)) {
                                 data[index][4] = "Act";
@@ -694,23 +695,36 @@ public class Race extends JFrame implements PropertyChangeListener {
     /**
      * @return all racers
      */
-        public ArrayList<Racer> getRanking() {
+    public ArrayList<Racer> getRanking() {
         ArrayList<Racer> allRacers = new ArrayList<>();
         allRacers.addAll(arena.getCompleatedRacers());
         allRacers.addAll(arena.getActiveRacers());
         allRacers.addAll(arena.getBrokenRacers());
         allRacers.addAll(arena.getDisabledRacers());
 
-        allRacers.sort(Comparator.comparingDouble(racer -> racer.getCurrentLocation().getX()));
-        Collections.reverse(allRacers);
 
-        for (int i = 0; i < allRacers.size(); i++) {
-            Racer racer = allRacers.get(i);
+        ArrayList<Racer> activeRacers = (ArrayList<Racer>) allRacers.stream()
+                .filter(racer -> arena.getActiveRacers().contains(racer))
+                .collect(Collectors.toList());
+
+
+        activeRacers.sort(Comparator.comparingDouble(racer -> racer.getCurrentLocation().getX()));
+        Collections.reverse(activeRacers);
+
+        for (int i = 0; i < activeRacers.size(); i++) {
+            Racer racer = activeRacers.get(i);
             racer.setPosition(i + 1);
         }
 
-        return allRacers;
+        ArrayList<Racer> ranking = new ArrayList<>();
+        ranking.addAll(arena.getCompleatedRacers());
+        ranking.addAll(activeRacers);
+        ranking.addAll(arena.getBrokenRacers());
+        ranking.addAll(arena.getDisabledRacers());
+
+        return ranking;
     }
+
 
 
     static class RacerInfo {
