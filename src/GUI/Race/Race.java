@@ -702,12 +702,7 @@ public class Race extends JFrame implements PropertyChangeListener {
         allRacers.addAll(arena.getBrokenRacers());
         allRacers.addAll(arena.getDisabledRacers());
 
-
-        ArrayList<Racer> activeRacers = (ArrayList<Racer>) allRacers.stream()
-                .filter(racer -> arena.getActiveRacers().contains(racer))
-                .collect(Collectors.toList());
-
-
+        ArrayList<Racer> activeRacers = new ArrayList<>(arena.getActiveRacers());
         activeRacers.sort(Comparator.comparingDouble(racer -> racer.getCurrentLocation().getX()));
         Collections.reverse(activeRacers);
 
@@ -720,10 +715,15 @@ public class Race extends JFrame implements PropertyChangeListener {
         ranking.addAll(arena.getCompleatedRacers());
         ranking.addAll(activeRacers);
         ranking.addAll(arena.getBrokenRacers());
-        ranking.addAll(arena.getDisabledRacers());
+        ArrayList<Racer> disabledRacers = new ArrayList<>(arena.getDisabledRacers());
+        Collections.reverse(disabledRacers);
+        ranking.addAll(disabledRacers);
 
+  
         return ranking;
     }
+
+
 
 
 
