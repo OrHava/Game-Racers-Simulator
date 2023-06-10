@@ -18,7 +18,7 @@ import utilities.Mishap;
 import utilities.Point;
 /** @author Or Hava 208418483
  */
-public abstract class Racer implements Runnable {
+public abstract class Racer implements Runnable,Cloneable {
     protected static int lastSerialNumber = 1;
 
     public static int getLastSerialNumber() {
@@ -332,5 +332,21 @@ public abstract class Racer implements Runnable {
         }
         propertyChangeListeners.clear();
     }
+
+    @Override
+    public Racer clone() { /// fix this!
+        try {
+
+            Racer racer = (Racer) super.clone();
+            racer.propertyChangeListeners = new ArrayList<>(this.propertyChangeListeners); // Deep copy of List
+            racer.propertyChangeSupport = new PropertyChangeSupport(racer);
+            racer.setSerialNumber(Racer.getLastSerialNumber());
+            return racer;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+
 
 }

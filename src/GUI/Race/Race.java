@@ -543,7 +543,9 @@ public class Race extends JFrame implements PropertyChangeListener {
                             Racer racer = null;
                             if (racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")) {
                                 if (selectedRacer != null) {
-                                    racer = builder.copyWheeledRacer(selectedRacer.getRacer());
+                                    racer = selectedRacer.getRacer().clone();
+
+
                                     if (color != null) {
                                         racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
                                     }
@@ -552,7 +554,7 @@ public class Race extends JFrame implements PropertyChangeListener {
 
                             } else {
                                 if (selectedRacer != null) {
-                                    racer = builder.copyRacer(selectedRacer.getRacer());
+                                    racer = selectedRacer.getRacer().clone();
                                     if (color != null) {
                                         racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
                                     }
@@ -659,9 +661,13 @@ public class Race extends JFrame implements PropertyChangeListener {
                         RaceBuilder raceBuilder = RaceBuilder.getInstance();
 
                         Racer defaultRacerCar = raceBuilder.buildDefaultRacer("game.racers.land.Car");
-                        System.out.println(defaultRacerCar.describeRacer());
+
+
+
+
+
                         for (int i = 0; i < nRacers; i++) {
-                            Racer copyRacer = raceBuilder.copyWheeledRacer(defaultRacerCar);
+                            Racer copyRacer = defaultRacerCar.clone();
                             arena.addRacer(copyRacer);
                             arena.initRace();
                             racers.add(copyRacer);
@@ -671,6 +677,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                             racersNumber++;
 
                         }
+                        System.out.println(arena.getActiveRacers());
 
 
                     } catch (NumberFormatException | ClassNotFoundException | NoSuchMethodException |
@@ -719,7 +726,7 @@ public class Race extends JFrame implements PropertyChangeListener {
         Collections.reverse(disabledRacers);
         ranking.addAll(disabledRacers);
 
-  
+
         return ranking;
     }
 
