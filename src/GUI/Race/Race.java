@@ -96,6 +96,12 @@ public class Race extends JFrame implements PropertyChangeListener {
 
         buildArenaButton.addMouseListener(new MouseAdapter() {
 
+            /**
+
+             Handles the mouse pressed event for the buildArenaButton.
+             Builds a new arena based on the user's input values.
+             @param e the MouseEvent to be processed
+             */
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -147,6 +153,12 @@ public class Race extends JFrame implements PropertyChangeListener {
         });
         addRacerButton.addMouseListener(new MouseAdapter() {
 
+            /**
+
+             Handles the mouse pressed event for the addRacerButton.
+             Adds a new racer to the arena if all necessary conditions are met.
+             @param e the MouseEvent to be processed
+             */
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -252,6 +264,12 @@ public class Race extends JFrame implements PropertyChangeListener {
             }
         });
         startRaceButton.addMouseListener(new MouseAdapter() {
+            /**
+
+             Handles the mouse pressed event for the startRaceButton.
+             Starts the race if all necessary conditions are met.
+             @param e the MouseEvent to be processed
+             */
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -333,6 +351,14 @@ public class Race extends JFrame implements PropertyChangeListener {
 
 
         showInfoButton.addMouseListener(new MouseAdapter() {
+            /**
+
+             Handles the mouse pressed event.
+             Displays real-time information about the race in a separate window.
+             Updates the information periodically every second.
+
+             @param e the MouseEvent to be processed
+             */
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -343,7 +369,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                 final boolean[] lastUpdate = {false};
                 // Create a new thread to update the information in real time
                 Thread infoThread = new Thread(() -> {
-                    while (true) {
+                    do {
                         ArrayList<Racer> completedRacers = arena.getCompleatedRacers();
                         ArrayList<Racer> activeRacers = arena.getActiveRacers();
                         ArrayList<Racer> brokenRacers = arena.getBrokenRacers();
@@ -360,7 +386,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                             data[index][2] = String.valueOf(racer.getMaxSpeed());
                             data[index][3] = String.valueOf(racer.getCurrentLocation().getX());
 
-                            if (completedRacers.contains(racer) && !disabledRacers.contains(racer) ) {
+                            if (completedRacers.contains(racer) && !disabledRacers.contains(racer)) {
                                 data[index][4] = "Comp";
                             } else if (activeRacers.contains(racer)) {
                                 data[index][4] = "Act";
@@ -404,10 +430,7 @@ public class Race extends JFrame implements PropertyChangeListener {
                             ex.printStackTrace();
                         }
 
-                        if (raceFinished && lastUpdate[0]) {
-                            break;
-                        }
-                    }
+                    } while (!raceFinished || !lastUpdate[0]);
                 });
 
                 infoThread.setDaemon(true);
@@ -416,6 +439,15 @@ public class Race extends JFrame implements PropertyChangeListener {
         });
 
         comboBoxRacers.addActionListener(new ActionListener() {
+            /**
+
+             Handles the action performed event.
+             Retrieves the selected racer from the combo box.
+             Retrieves the racer's name and number if available.
+             Sets the corresponding combo box values based on the selected racer's description.
+             Sets the text fields with the selected racer's name, maximum speed, and acceleration.
+             @param e the ActionEvent to be processed
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox<RacerInfo> source = (JComboBox<RacerInfo>) e.getSource();
@@ -432,8 +464,6 @@ public class Race extends JFrame implements PropertyChangeListener {
                     racerNumber = selectedRacer.getNumber();
                 }
 
-
-                System.out.println("Selected Racer: " + racerName + " (Number: " + racerNumber + ")");
 
              if(selectedRacer!=null){
                  if(selectedRacer.getRacer().describeRacer().contains("Airplane")){
@@ -486,6 +516,27 @@ public class Race extends JFrame implements PropertyChangeListener {
             }
         });
         CopyRacerBtn.addMouseListener(new MouseAdapter() {
+            /**
+
+             Handles the mouse press event.
+             Retrieves the selected racer from the combo box.
+             If no racer is selected, displays an error message and returns.
+             Prints the selected racer.
+             Checks if the race has already finished and displays a message.
+             Checks if the race has already started and displays a message.
+             Checks if the arena has been built and displays a message.
+             Checks if the maximum number of racers has been reached and displays a message.
+             Retrieves the name, maximum speed, and acceleration from the corresponding text fields.
+             If the input values are invalid, displays an error message and returns.
+             Retrieves the selected racer type and color from the combo boxes.
+             Clones the selected racer and sets the color if available.
+             Notifies property change listeners about the addition of the racer.
+             Adds the racer to the arena, initializes the race, and adds it to the racers list.
+             Adds the racer to the combo box as a new RacerInfo object.
+             Adds the racer image file name to the racersImages list.
+             Loads the racer image and increments the racer number.
+             @param e the MouseEvent to be processed
+             */
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -541,26 +592,14 @@ public class Race extends JFrame implements PropertyChangeListener {
                     try {
                         if (racerType != null) {
                             Racer racer = null;
-                            if (racerType.equals("Bicycle") || racerType.equals("Airplane") || racerType.equals("Car")) {
-                                if (selectedRacer != null) {
-                                    racer = selectedRacer.getRacer().clone();
+                            if (selectedRacer != null) {
+                                racer = selectedRacer.getRacer().clone();
 
 
-                                    if (color != null) {
-                                        racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
-                                    }
-                                    firePropertyChange("racerAdded", null, racer);
+                                if (color != null) {
+                                    racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
                                 }
-
-                            } else {
-                                if (selectedRacer != null) {
-                                    racer = selectedRacer.getRacer().clone();
-                                    if (color != null) {
-                                        racer.setColor(EnumContainer.Color.valueOf(color.toUpperCase()));
-                                    }
-                                    firePropertyChange("racerAdded", null, racer);
-                                }
-
+                                firePropertyChange("racerAdded", null, racer);
                             }
 
                             arena.addRacer(racer);
@@ -596,13 +635,29 @@ public class Race extends JFrame implements PropertyChangeListener {
         });
         CarRaceBuilderBtn.addMouseListener(new MouseAdapter() {
             /**
-             * @param e the event to be processed
+
+             Handles the mouse press event.
+             Resets the race and retrieves the number of racers entered by the user.
+             If the input is not a valid positive integer, displays an error message and returns.
+             Checks if the race has already finished and resets it if necessary.
+             Makes the race arena panels visible.
+             Checks if the race has already started and is still in progress, displays a message and returns.
+             Parses the arena length and maximum racers from the corresponding text fields.
+             If the input values are invalid, displays an error message and returns.
+             Loads the image for the land arena and builds the arena object using the builder.
+             Notifies property change listeners about the completion of building the arena.
+             Builds a default racer car object using the race builder.
+             Adds the specified number of racers to the arena, initializes the race, and adds them to the racers list.
+             Loads the racer image and increments the racer number.
+             Prints the active racers in the arena.
+
+             @param e the MouseEvent to be processed
              */
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
                 resetRace();
-                int nRacers=0;
+                int nRacers;
 
                 String text = nRacersText.getText();
                 if (!text.matches("\\d+")) {
@@ -700,7 +755,18 @@ public class Race extends JFrame implements PropertyChangeListener {
 
 
     /**
-     * @return all racers
+
+     Returns a list of all racers in the race, sorted according to their position in the ranking.
+
+     The racers are collected from different categories: completed racers, active racers, broken racers, and disabled racers.
+
+     The active racers are sorted based on their current location in the race track, in descending order.
+
+     The position of each active racer is set accordingly.
+
+     The final ranking consists of completed racers, sorted active racers, broken racers, and disabled racers in reverse order.
+
+     @return an ArrayList of racers representing the overall ranking
      */
     public ArrayList<Racer> getRanking() {
         ArrayList<Racer> allRacers = new ArrayList<>();
@@ -732,41 +798,88 @@ public class Race extends JFrame implements PropertyChangeListener {
 
 
 
+    /**
 
+     A static nested class representing information about a racer.
+
+     It holds the racer's name, number, and a reference to the racer object.
+     */
 
     static class RacerInfo {
         private final String name;
         private final int number;
         private Racer racer;
+        /**
 
+         Constructs a new RacerInfo object with the specified name, number, and racer.
+         @param name the name of the racer
+         @param number the number of the racer
+         @param racer the racer object associated with this RacerInfo
+         */
         public RacerInfo(String name, int number, Racer racer) {
             this.name = name;
             this.number = number;
             this.racer=racer;
         }
+        /**
 
+
+         @return the name of the racer
+         */
         public String getName() {
             return name;
         }
+        /**
 
+
+         @return the number of the racer
+         */
         public int getNumber() {
             return number;
         }
+        /**
+
+
+         @return a string representation of the RacerInfo object
+         */
         @Override
         public String toString() {
             return "Name: " + name + ", ID: " + number;
         }
+        /**
 
+
+         @return the racer object associated with this RacerInfo
+         */
         public Racer getRacer() {
             return racer;
         }
-
+        /**
+         Sets the racer object associated with this RacerInfo.
+         @param racer the racer object to be set
+         */
         public void setRacer(Racer racer) {
             this.racer = racer;
         }
     }
 
+    /**
+     The main entry point of the program.
 
+     Creates a new instance of the Race class and sets up the GUI.
+
+     Sets the content pane of the race frame, sets the title, size, and visibility of the frame.
+
+     Sets the default close operation to exit the program when the frame is closed.
+
+     Makes the panels in the race arena transparent.
+
+     Sets the icon image of the frame using the provided image file path.
+
+     Initializes the race object by invoking the init() method.
+
+     @param args the command line arguments (not used)
+     */
     public static  void  main(String[] args){
 
        race = new Race();
@@ -798,9 +911,13 @@ public class Race extends JFrame implements PropertyChangeListener {
         race.init();
 
 
-
     }
 
+    /**
+     Initializes the object.
+     Adds the current object as a property change listener to the builder.
+     This allows the object to receive property change events from the builder and respond accordingly.
+     */
     private void init() {
         builder.addPropertyChangeListener(this);
     }
@@ -834,7 +951,13 @@ public class Race extends JFrame implements PropertyChangeListener {
 
 
     private Thread raceThread;
+    /**
 
+     Starts the race thread.
+     The race thread is created and started, which runs in a loop until the race is finished.
+     Inside the loop, it sleeps for 1000 milliseconds (1 second) and checks if the race has finished.
+     If the thread is interrupted during sleep, the loop will be exited and the thread will stop.
+     */
     private void startRaceThread() {
         raceThread = new Thread(() -> {
 
@@ -850,17 +973,28 @@ public class Race extends JFrame implements PropertyChangeListener {
 
         });
 
-        raceThread.start();  // Start the race thread
+        raceThread.start();
     }
 
+
+    /**
+
+     Stops the race thread if it is running.
+     If the race thread is not null and still alive, it will be interrupted and the race thread variable will be reset to null.
+     */
     private void stopRaceThread() {
         if (raceThread != null && raceThread.isAlive()) {
-            raceThread.interrupt();  // Interrupt the race thread
-            raceThread = null;  // Reset the race thread variable
+            raceThread.interrupt();
+            raceThread = null;
         }
     }
 
 
+    /**
+     Resets the race by clearing all race-related data and resetting the race state.
+     This method restores the initial state of the race, including race settings, racers, and the race arena.
+     It also resets the serial number for racers and clears the racer selection ComboBox.
+     */
     private void resetRace() {
         raceStarted = false;
         infoTable = null;
@@ -871,6 +1005,7 @@ public class Race extends JFrame implements PropertyChangeListener {
         racers = new ArrayList<>();
         builder = RaceBuilder.getInstance();
         comboBoxRacers.removeAllItems();
+        Racer.setLastSerialNumber(1);
         for (Component c : race.PanelArena.getComponents()) {
             if (c instanceof JPanel) {
                 c.setLocation(0, c.getY());
@@ -888,7 +1023,11 @@ public class Race extends JFrame implements PropertyChangeListener {
 
 
     /**
-     * @param ArenaType which arena to put in the panel arena
+     Loads an image of an arena and displays it on the panel.
+
+     @param ArenaType the type of the arena.
+     This parameter should be a string representing the desired type of the arena.
+     It should correspond to the filename of the image file without the extension. Example: "AerialArena".
      */
     private static void loadImageArena(String ArenaType) {
 
@@ -918,8 +1057,16 @@ public class Race extends JFrame implements PropertyChangeListener {
 
 
     /**
-     * @param Typeandcolor the type and color of racer
-     * @param panelIndex the index of the panel racer
+     * Loads an image of a racer and displays it on a specific panel.
+     * @param Typeandcolor the type and color of racer This parameter should
+     * be a string representing the desired type and color
+     * of the racer. The format should be "type_color",
+     * where "type" is the type of the racer and
+     * "color" is the color of the racer. Example: "car_red".
+     *
+     * @param panelIndex panelIndex the index of the panel where the racer image should be displayed.
+     * This parameter should be an integer indicating the index of the panel in the PANEL_RACERS array.
+     *The index should be between 1 and 20 (inclusive).
      */
     private static void loadImageRacer(String Typeandcolor, int panelIndex) {
 
